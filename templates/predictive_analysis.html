@@ -1,0 +1,650 @@
+{% extends "base.html" %}
+{% block content %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            background-color: #0D0907;
+            background-image: linear-gradient(to bottom right, #0D0907, #1a1a1a);
+            color: white;
+            font-family: 'Poppins', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+        }
+
+        h2 {
+            text-align: center;
+            font-size: 2.5rem;
+            margin: 30px 0;
+            color: #f8f8f8;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            font-weight: 600;
+            letter-spacing: 1px;
+            position: relative;
+            padding-bottom: 15px;
+        }
+
+        h2:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, #4c4eaf, transparent);
+        }
+
+        h3 {
+            text-align: center;
+            font-size: 1.8rem;
+            margin: 30px 0 20px;
+            color: #f0f0f0;
+            font-weight: 500;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .card {
+            background: linear-gradient(145deg, #1a1a1a, #222);
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+            padding: 30px;
+            margin-bottom: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
+            transform: translateY(-5px);
+        }
+
+        form {
+            width: 100%;
+            max-width: 800px;
+            margin: 20px auto;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 500;
+            color: #ddd;
+            font-size: 0.95rem;
+            letter-spacing: 0.5px;
+        }
+
+        label i {
+            margin-right: 8px;
+            color: #4c4eaf;
+        }
+
+        select, input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid rgba(76, 78, 175, 0.3);
+            border-radius: 8px;
+            background: rgba(30, 30, 30, 0.8);
+            color: white;
+            font-size: 16px;
+            font-family: 'Poppins', sans-serif;
+            transition: all 0.3s ease;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        select:focus, input:focus {
+            border-color: #4c4eaf;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(76, 78, 175, 0.2);
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 25px;
+            flex-wrap: wrap;
+        }
+
+        button, a.button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 16px;
+            letter-spacing: 0.5px;
+            transition: all 0.3s ease;
+            font-family: 'Poppins', sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            flex: 1;
+            min-width: 150px;
+            text-align: center;
+            text-decoration: none;
+        }
+
+        button[type="submit"] {
+            background: linear-gradient(135deg, #4c4eaf, #373b93);
+            color: white;
+            box-shadow: 0 4px 15px rgba(76, 78, 175, 0.3);
+        }
+
+        button[type="submit"]:hover {
+            background: linear-gradient(135deg, #5658c5, #4245a8);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 18px rgba(76, 78, 175, 0.4);
+        }
+
+        a.button {
+            background: linear-gradient(135deg, #333, #444);
+            color: white;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        a.button:hover {
+            background: linear-gradient(135deg, #444, #555);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.3);
+        }
+
+        .message {
+            background: linear-gradient(135deg, #2a6c3d, #1e4d2b);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            border-left: 4px solid #4CAF50;
+            animation: fadeIn 0.5s ease-out forwards;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            margin: 30px 0;
+            border-radius: 10px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+            background: rgba(25, 25, 25, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        th {
+            background: linear-gradient(135deg, #4c4eaf, #373b93);
+            color: white;
+            font-weight: 600;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        tr:nth-child(even) {
+            background-color: rgba(40, 40, 40, 0.5);
+        }
+
+        tr:nth-child(odd) {
+            background-color: rgba(30, 30, 30, 0.5);
+        }
+
+        tr:hover {
+            background-color: rgba(76, 78, 175, 0.1);
+        }
+
+        /* Prediction column highlighting */
+        td.prediction {
+            background-color: rgba(76, 78, 175, 0.2);
+            font-weight: 500;
+        }
+
+        /* Animation for elements */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .animate {
+            animation: fadeIn 0.5s ease-out forwards;
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 10px;
+            height: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #1a1a1a;
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #4c4eaf;
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #373b93;
+        }
+
+        /* Tooltip styles */
+        .tooltip {
+            position: relative;
+            display: inline-block;
+            margin-left: 5px;
+            color: #4c4eaf;
+        }
+
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 200px;
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 10px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            transform: translateX(-50%);
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 14px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .button-group {
+                flex-direction: column;
+            }
+            
+            button, a.button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<div class="container animate">
+    <h2><i class="fas fa-brain"></i> Predictive Analysis</h2>
+
+    <div class="card">
+        <!-- Form for selecting target column, model, and index selection -->
+        <form method="GET">
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="target_column"><i class="fas fa-bullseye"></i> Target Column</label>
+                    <select name="target_column" id="target_column">
+                        {% for column in columns %}
+                            <option value="{{ column }}" {% if column == selected_column %}selected{% endif %}>{{ column }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="model"><i class="fas fa-cogs"></i> ML Model</label>
+                    <select name="model" id="model">
+                        {% for model in model_options %}
+                            <option value="{{ model }}" {% if model == selected_model %}selected{% endif %}>{{ model }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="index_selection">
+                        <i class="fas fa-list-ol"></i> Index Range
+                        <span class="tooltip"><i class="fas fa-info-circle"></i>
+                            <span class="tooltiptext">Select 'All' to use the entire dataset or 'Custom Range' to specify start and end indices</span>
+                        </span>
+                    </label>
+                    <select name="index_selection" id="index_selection">
+                        <option value="all" {% if index_selection == 'all' %}selected{% endif %}>All</option>
+                        <option value="range" {% if index_selection == 'range' %}selected{% endif %}>Custom Range</option>
+                    </select>
+                </div>
+
+                <div class="form-group" id="index_range_inputs" style="display: none;">
+                    <div style="display: flex; gap: 15px;">
+                        <div style="flex: 1;">
+                            <label for="start_index"><i class="fas fa-step-forward"></i> Start Index</label>
+                            <input type="number" name="start_index" id="start_index" min="0" value="0">
+                        </div>
+                        <div style="flex: 1;">
+                            <label for="end_index"><i class="fas fa-step-backward fa-flip-horizontal"></i> End Index</label>
+                            <input type="number" name="end_index" id="end_index" min="0">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="kmeans">
+                        <i class="fas fa-object-group"></i> K-Means Clustering
+                        <span class="tooltip"><i class="fas fa-info-circle"></i>
+                            <span class="tooltiptext">Apply K-means clustering to identify patterns in your data</span>
+                        </span>
+                    </label>
+                    <select name="kmeans" id="kmeans">
+                        <option value="no">No</option>
+                        <option value="yes" {% if kmeans == 'yes' %}selected{% endif %}>Yes</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="anomaly_detection">
+                        <i class="fas fa-exclamation-triangle"></i> Anomaly Detection
+                        <span class="tooltip"><i class="fas fa-info-circle"></i>
+                            <span class="tooltiptext">Identify unusual patterns that don't conform to expected behavior</span>
+                        </span>
+                    </label>
+                    <select name="anomaly_detection" id="anomaly_detection">
+                        <option value="no">No</option>
+                        <option value="yes" {% if anomaly_detection == 'yes' %}selected{% endif %}>Yes</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="button-group">
+                <button type="submit"><i class="fas fa-play-circle"></i> Run Analysis</button>
+                <a href="{% url 'display_csv' %}" class="button"><i class="fas fa-arrow-left"></i> Back to CSV Display</a>
+            </div>
+        </form>
+    </div>
+
+    {% if message %}
+        <div class="message animate">
+            <i class="fas fa-info-circle"></i> {{ message }}
+        </div>
+    {% endif %}
+
+    {% if table_html %}
+        <h3 class="animate"><i class="fas fa-table"></i> Updated Dataset with Predictions</h3>
+        <div class="table-container animate">
+            {% autoescape off %}
+                {{ table_html }}
+            {% endautoescape %}
+        </div>
+    {% endif %}
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const indexSelection = document.getElementById("index_selection");
+        const indexRangeInputs = document.getElementById("index_range_inputs");
+        
+        // Set initial display state
+        indexRangeInputs.style.display = 
+            indexSelection.value === "range" ? "block" : "none";
+        
+        // Add event listener for changes
+        indexSelection.addEventListener("change", function() {
+            indexRangeInputs.style.display = 
+                this.value === "range" ? "block" : "none";
+        });
+        
+        // Add animation classes to elements as they load
+        const animatedElements = document.querySelectorAll('.card, h2, h3, .message, .table-container');
+        animatedElements.forEach((element, index) => {
+            setTimeout(() => {
+                element.classList.add('animate');
+            }, index * 100);
+        });
+        
+        // Highlight prediction columns in the table
+        if (document.querySelector('table')) {
+            const headers = document.querySelectorAll('table th');
+            headers.forEach((header, index) => {
+                if (header.textContent.includes('Prediction') || 
+                    header.textContent.includes('Cluster') || 
+                    header.textContent.includes('Anomaly')) {
+                    
+                    // Get the column index
+                    const columnIndex = index;
+                    
+                    // Highlight all cells in this column
+                    const rows = document.querySelectorAll('table tr');
+                    rows.forEach(row => {
+                        const cells = row.querySelectorAll('td');
+                        if (cells.length > columnIndex) {
+                            cells[columnIndex].classList.add('prediction');
+                        }
+                    });
+                }
+            });
+        }
+    });
+</script>
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{% comment %} {% extends "base.html" %}
+{% block content %}
+<h2>Predictive Analysis</h2>
+
+<!-- Form for selecting target column, model, and index selection -->
+<form method="GET">
+    <label for="target_column">Select Target Column:</label>
+    <select name="target_column">
+        {% for column in columns %}
+            <option value="{{ column }}" {% if column == selected_column %}selected{% endif %}>{{ column }}</option>
+        {% endfor %}
+    </select>
+
+    <label for="model">Select ML Model:</label>
+    <select name="model">
+        {% for model in model_options %}
+            <option value="{{ model }}" {% if model == selected_model %}selected{% endif %}>{{ model }}</option>
+        {% endfor %}
+    </select>
+
+    <label for="index_selection">Select Index Range:</label>
+    <select name="index_selection" id="index_selection">
+        <option value="all" {% if index_selection == 'all' %}selected{% endif %}>All</option>
+        <option value="range" {% if index_selection == 'range' %}selected{% endif %}>Custom Range</option>
+    </select>
+
+    <div id="index_range_inputs" style="display: none;">
+        <label for="start_index">Start Index:</label>
+        <input type="number" name="start_index" min="0" value="0">
+
+        <label for="end_index">End Index:</label>
+        <input type="number" name="end_index" min="0">
+    </div>
+
+    <label for="kmeans">Apply K-Means Clustering:</label>
+    <select name="kmeans">
+        <option value="no">No</option>
+        <option value="yes">Yes</option>
+    </select>
+
+    <label for="anomaly_detection">Apply Anomaly Detection:</label>
+    <select name="anomaly_detection">
+        <option value="no">No</option>
+        <option value="yes">Yes</option>
+    </select>
+
+    <button type="submit">Run Analysis</button>
+    <a href="{% url 'display_csv' %}">Back to CSV Display</a>
+</form>
+
+{% if message %}
+    <p>{{ message }}</p>
+{% endif %}
+
+{% if table_html %}
+    <h3>Updated Dataset with Predictions:</h3>
+    <div>
+        {% autoescape off %}
+            {{ table_html }}
+        {% endautoescape %}
+    </div>
+{% endif %}
+
+<script>
+    document.getElementById("index_selection").addEventListener("change", function() {
+        document.getElementById("index_range_inputs").style.display = 
+            this.value === "range" ? "block" : "none";
+    });
+</script>
+<style>
+    body {
+        background-color: #0D0907;
+        color: white;
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+    }
+
+    h1 {
+        text-align: center;
+        font-size: 2rem;
+        margin-bottom: 20px;
+        color: #f8f8f8;
+    }
+
+    form {
+        width: 80%;
+        max-width: 600px;
+        margin: 20px auto;
+        background: #222;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+    }
+
+    label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: bold;
+        color: #ddd;
+    }
+
+    select, input {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 15px;
+        border: 1px solid #666;
+        border-radius: 5px;
+        background: #333;
+        color: white;
+    }
+
+    button {
+        width: 100%;
+        padding: 10px;
+        background-color: #4c4eaf;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: 0.3s;
+        font-size: 16px;
+        font-weight: bold;
+    }
+
+    button:hover {
+        background-color: #373b93;
+    }
+
+    table {
+        width: 90%;
+        margin: 30px auto;
+        border-collapse: collapse;
+        box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+    }
+
+    th, td {
+        padding: 12px;
+        text-align: left;
+        border-bottom: 1px solid #444;
+    }
+
+    th {
+        background-color: #4c4eaf;
+        color: white;
+        font-weight: bold;
+    }
+
+    tr:nth-child(even) {
+        background-color: #1a1a1a;
+    }
+
+    tr:nth-child(odd) {
+        background-color: #222;
+    }
+
+    hr {
+        border: 0;
+        height: 2px;
+        background: #666;
+        margin: 30px auto;
+        width: 80%;
+    }
+    .center-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 6vh;
+        text-align: center;
+    }
+</style>
+{% endblock %} {% endcomment %}

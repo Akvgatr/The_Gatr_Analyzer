@@ -1,0 +1,13 @@
+<h2>Saved Tables & Passwords</h2>
+<table border="1">
+    <tr>
+        <th>Table Name</th>
+        <th>Password</th>
+    </tr>
+    {% for entry in table_data %}
+    <tr>
+        <td>{{ entry.table }}</td>
+        <td>{{ entry.password }}</td>
+    </tr>
+    {% endfor %}
+</table>

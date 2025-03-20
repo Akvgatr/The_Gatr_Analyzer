@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The_Gatr_Analyzer</title>
+    <script src="/static/samplejs.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #4c4eaf;
+            --primary-hover: #373b93;
+            --dark-bg: #0D0907;
+            --header-bg: #000000;
+            --text-color: #ffffff;
+            --text-muted: #b3b3b3;
+            --border-color: #333333;
+            --shadow-color: rgba(0, 0, 0, 0.3);
+        }
+
+        body {
+            font-family: 'Poppins', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--dark-bg);
+            color: var(--text-color);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        header {
+            background-color: var(--header-bg);
+            color: var(--text-color);
+            padding: 15px 0;
+            text-align: center;
+            box-shadow: 0 4px 8px var(--shadow-color);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        nav {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        nav ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        nav ul li {
+            position: relative;
+        }
+
+        nav ul li a {
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: color 0.3s ease;
+            padding: 10px 15px;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        nav ul li a:hover {
+            color: var(--primary-color);
+            background-color: rgba(76, 78, 175, 0.1);
+        }
+
+        nav ul li a i {
+            font-size: 1.2rem;
+        }
+
+        .logout {
+            background: none;
+            border: none;
+            color: var(--text-color);
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: color 0.3s ease;
+            padding: 10px 15px;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .logout:hover {
+            color: var(--primary-color);
+            background-color: rgba(76, 78, 175, 0.1);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            nav ul {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+<header>
+    <nav>
+        <ul>
+            {% if request.session.username %}
+                <li>Welcome {{ request.session.username }}</li>
+                <li><a href="/"><i class="fas fa-home"></i> Home</a></li>
+                <li><a href="/display_csv"><i class="fas fa-file-csv"></i> Display CSV</a></li>
+                <li><a href="/analysis"><i class="fas fa-chart-line"></i> Analysis</a></li>
+                <li><a href="/graphs"><i class="fas fa-chart-bar"></i> Graphs</a></li>
+                <li><a href="{% url 'view_logs' %}" class="btn"><i class="fas fa-database"></i> View Logs</a></li>
+                <li><a href="/dashboard"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+                <li>
+                    <form action="{% url 'logout' %}" method="POST" style="display:inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="logout"><i class="fas fa-sign-out-alt"></i> Logout</button>
+                    </form>
+                </li>
+            {% else %}
+                <li><a href="{% url 'login' %}"><i class="fas fa-sign-in-alt"></i> Login</a></li>
+                <li><a href="{% url 'signup' %}"><i class="fas fa-user-plus"></i> Signup</a></li>
+            {% endif %}
+        </ul>
+    </nav>
+</header>
+</body>
+</html>
+
+
+
+
+{% comment %} <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The_Gatr_Analyzer</title>
+    <script src="/static/samplejs.js"></script>
+    <style>
+        /* General Styles */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #0D0907; /* Same as Sign-in Page */
+            color: white; /* Text color */
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* Header */
+        header {
+            background-color: #000000; /* Black header */
+            color: white;
+            padding: 10px 0;
+            text-align: center;
+        }
+
+        nav ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+        }
+
+        nav ul li {
+            margin: 0 15px;
+        }
+
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            transition: color 0.3s ease;
+        }
+
+        nav ul li a:hover {
+            color: #4c4eaf; /* Light Blue Hover */
+        }
+
+        /* Main Content */
+        main {
+            display: flex;
+            flex: 1;
+            padding: 20px;
+        }
+
+        main section {
+            flex: 2;
+            margin-right: 20px;
+        }
+
+        main section h2 {
+            color: white;
+        }
+
+        main section p, main section ul {
+            margin-bottom: 20px;
+        }
+
+        main section ul {
+            list-style-type: square;
+        }
+
+        aside {
+            flex: 1;
+            background-color: #1a1a1a; /* Darker side panel */
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        aside h3 {
+            color: #4c4eaf;
+        }
+
+        aside ul {
+            list-style-type: circle;
+        }
+
+        aside ul li {
+            margin-bottom: 10px;
+        }
+
+        /* Footer */
+        footer {
+            background-color: #000000;
+            color: white;
+            text-align: center;
+            padding: 10px 0;
+        }
+
+        /* Button Styles */
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #4c4eaf; /* Light blue */
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #3a3c9e; /* Slightly darker blue */
+        }
+
+        /* Form Styles */
+        form {
+            display: flex;
+            flex-direction: column;
+            background-color: #1a1a1a; /* Dark Form */
+            padding: 20px;
+            border-radius: 8px;
+        }
+
+        form label {
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        form input, form textarea, select {
+            margin-bottom: 15px;
+            padding: 10px;
+            border: 1px solid #4c4eaf;
+            background-color: #222222;
+            color: white;
+            border-radius: 5px;
+        }
+
+        form button {
+            align-self: flex-start;
+        }
+
+        #formStatus {
+            margin-top: 15px;
+            font-weight: bold;
+            color: red;
+        }
+
+        /* Logout Button */
+        form button.logout {
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            main {
+                flex-direction: column;
+            }
+
+            main section {
+                margin-right: 0;
+                margin-bottom: 20px;
+            }
+
+            aside {
+                margin-bottom: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+<header>
+    <nav>
+        <ul>            {% if request.session.username %}
+                <li>Welcome {{ request.session.username }}</li>
+            <li><a href="/">Home</a></li>
+            <li><a href="/display_csv">Display CSV</a></li>
+            <li><a href="/analysis">Analysis</a></li>
+            <li><a href="/graphs">Graphs</a></li>
+
+            <li><a href="{% url 'view_logs' %}" class="btn">View Stored Tables & Passwords</a></li>
+
+
+                <li><a href="/dashboard">Dashboard</a></li>
+
+                <!-- Logout Button -->
+                <li>
+                    <form action="{% url 'logout' %}" method="POST" style="display:inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="logout">
+                            Logout
+                        </button>
+                    </form>
+                </li>
+            {% else %}
+                <li><a href="{% url 'login' %}">Login</a></li>
+                <li><a href="{% url 'signup' %}">Signup</a></li>
+            {% endif %}
+        </ul>
+    </nav>
+</header>
+</body>
+</html> {% endcomment %}

@@ -1,0 +1,564 @@
+{% extends "base.html" %}
+{% block content %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #4c4eaf;
+            --primary-hover: #373b93;
+            --primary-light: #6a6cce;
+            --dark-bg: #0D0907;
+            --card-bg: #1a1a1a;
+            --card-bg-alt: #222;
+            --input-bg: #2a2a2a;
+            --text-color: #ffffff;
+            --text-muted: #b3b3b3;
+            --border-color: #333333;
+            --success-color: #2ecc71;
+            --shadow-color: rgba(0, 0, 0, 0.3);
+        }
+
+        body {
+            background-color: var(--dark-bg);
+            background-image: linear-gradient(to bottom right, #0D0907, #1a1a1a);
+            color: var(--text-color);
+            font-family: 'Poppins', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 30px 0 60px;
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        h2 {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 30px;
+            color: var(--text-color);
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            position: relative;
+            padding-bottom: 15px;
+        }
+
+        h2:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, var(--primary-color), transparent);
+        }
+
+        h3 {
+            text-align: center;
+            font-size: 1.8rem;
+            margin: 30px 0 20px;
+            color: var(--primary-light);
+            font-weight: 500;
+            letter-spacing: 0.5px;
+        }
+
+        .card {
+            background: linear-gradient(145deg, var(--card-bg), var(--card-bg-alt));
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 15px 35px var(--shadow-color);
+            margin-bottom: 30px;
+            border-top: 4px solid var(--primary-color);
+            transition: all 0.3s ease;
+            animation: slideUp 0.6s ease-out;
+        }
+
+        .card:hover {
+            box-shadow: 0 18px 40px rgba(0, 0, 0, 0.4);
+            transform: translateY(-5px);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .card-header i {
+            font-size: 1.8rem;
+            margin-right: 15px;
+            color: var(--primary-light);
+        }
+
+        .card-header h2 {
+            margin: 0;
+            font-size: 1.8rem;
+            text-align: left;
+            padding-bottom: 0;
+        }
+
+        .card-header h2:after {
+            display: none;
+        }
+
+        form {
+            width: 100%;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 12px;
+            font-weight: 500;
+            color: var(--text-color);
+            font-size: 1.1rem;
+            letter-spacing: 0.3px;
+        }
+
+        label i {
+            margin-right: 10px;
+            color: var(--primary-light);
+        }
+
+        select {
+            width: 100%;
+            padding: 14px 18px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            background: rgba(42, 42, 42, 0.8);
+            color: var(--text-color);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+            font-family: 'Poppins', sans-serif;
+            margin-bottom: 5px;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='white' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: calc(100% - 15px) center;
+            padding-right: 40px;
+        }
+
+        select:focus {
+            outline: none;
+            border-color: var(--primary-light);
+            box-shadow: 0 0 0 3px rgba(76, 78, 175, 0.25), inset 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        select option {
+            padding: 10px;
+            background-color: var(--input-bg);
+        }
+
+        .method-description {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-top: 8px;
+            padding-left: 5px;
+            font-style: italic;
+        }
+
+        button {
+            display: inline-block;
+            width: 100%;
+            padding: 14px 24px;
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-hover));
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1.1rem;
+            font-weight: 600;
+            text-align: center;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+            letter-spacing: 0.5px;
+            position: relative;
+            overflow: hidden;
+            font-family: 'Poppins', sans-serif;
+            margin-top: 10px;
+        }
+
+        button:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: all 0.6s ease;
+        }
+
+        button:hover {
+            background: linear-gradient(135deg, var(--primary-hover), var(--primary-color));
+            transform: translateY(-3px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        button:hover:before {
+            left: 100%;
+        }
+
+        button i {
+            margin-right: 10px;
+        }
+
+        .results-container {
+            background: linear-gradient(145deg, var(--card-bg), var(--card-bg-alt));
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 15px 35px var(--shadow-color);
+            margin: 40px auto;
+            border-left: 4px solid var(--primary-color);
+            transition: all 0.3s ease;
+            animation: slideUp 0.8s ease-out;
+            max-width: 900px;
+        }
+
+        .results-container:hover {
+            box-shadow: 0 18px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        .results-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .results-header i {
+            font-size: 1.5rem;
+            margin-right: 10px;
+            color: var(--primary-light);
+        }
+
+        .results-header h3 {
+            margin: 0;
+            font-size: 1.5rem;
+            text-align: left;
+        }
+
+        .plot-container {
+            overflow-x: auto;
+            margin-top: 20px;
+            border-radius: 10px;
+            background: rgba(25, 25, 25, 0.7);
+            padding: 20px;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin: 30px auto;
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #333, #444);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            text-align: center;
+        }
+
+        .back-link:hover {
+            background: linear-gradient(135deg, #444, #555);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .back-link i {
+            margin-right: 8px;
+        }
+
+        .method-info {
+            background: rgba(76, 78, 175, 0.1);
+            border-left: 3px solid var(--primary-color);
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .method-info h4 {
+            margin-top: 0;
+            color: var(--primary-light);
+        }
+
+        .method-info p {
+            margin-bottom: 0;
+            font-size: 0.95rem;
+        }
+
+        .center-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 30px;
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 10px;
+            height: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #1a1a1a;
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary-color);
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary-hover);
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .container {
+                width: 95%;
+            }
+            
+            .card, .results-container {
+                padding: 20px;
+            }
+            
+            h2 {
+                font-size: 2rem;
+            }
+            
+            h3 {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+
+<div class="container">
+    <h2><i class="fas fa-microscope"></i> Advanced Data Preprocessing</h2>
+
+    <div class="card">
+        <div class="card-header">
+            <i class="fas fa-sliders-h"></i>
+            <h2>Preprocessing Options</h2>
+        </div>
+        
+        <form method="POST">
+            {% csrf_token %}
+            
+            <div class="form-group">
+                <label for="column"><i class="fas fa-table"></i> Select Column</label>
+                <select name="column" id="column" required>
+                    {% for column in columns %}
+                        <option value="{{ column }}">{{ column }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="method"><i class="fas fa-magic"></i> Select Preprocessing Method</label>
+                <select name="method" id="method" required onchange="showMethodInfo()">
+                    <option value="remove_outliers_iqr">Remove Outliers (IQR)</option>
+                    <option value="remove_outliers_zscore">Remove Outliers (Z-score)</option>
+                    <option value="log_transform">Log Transform</option>
+                    <option value="square_transform">Square Transform</option>
+                    <option value="standard_scaling">Standard Scaling</option>
+                    <option value="min_max_scaling">Min-Max Scaling</option>
+                    <option value="fill_missing_gboost">Impute Missing (GBoost)</option>
+                    <option value="fill_missing_rf">Impute Missing (Random Forest)</option>
+                    <option value="tfidf_vectorization">TF-IDF Text Processing</option>
+                    <option value="smote">SMOTE (Data Balancing)</option>
+                </select>
+                <div id="method-description" class="method-description">
+                    Select a preprocessing method to see its description.
+                </div>
+            </div>
+
+            <div id="method-info" class="method-info" style="display: none;">
+                <h4 id="method-title">Method Information</h4>
+                <p id="method-text"></p>
+            </div>
+
+            <button type="submit"><i class="fas fa-check-circle"></i> Apply Preprocessing</button>
+        </form>
+    </div>
+
+    {% if plot_html %}
+        <div class="results-container">
+            <div class="results-header">
+                <i class="fas fa-chart-line"></i>
+                <h3>Results for {{ column_name }}</h3>
+            </div>
+            <div class="plot-container">
+                {{ plot_html|safe }}
+            </div>
+        </div>
+    {% endif %}
+
+    <div class="center-container">
+        <a href="{% url 'display_csv' %}" class="back-link"><i class="fas fa-arrow-left"></i> Back to Basic Cleaning</a>
+    </div>
+</div>
+
+<script>
+    function showMethodInfo() {
+        const method = document.getElementById('method').value;
+        const methodInfo = document.getElementById('method-info');
+        const methodTitle = document.getElementById('method-title');
+        const methodText = document.getElementById('method-text');
+        const methodDescription = document.getElementById('method-description');
+        
+        // Method descriptions
+        const descriptions = {
+            'remove_outliers_iqr': {
+                title: 'Remove Outliers (IQR)',
+                text: 'Removes data points that fall below Q1 - 1.5*IQR or above Q3 + 1.5*IQR, where Q1 and Q3 are the first and third quartiles, and IQR is the interquartile range.',
+                short: 'Removes outliers using the Interquartile Range method'
+            },
+            'remove_outliers_zscore': {
+                title: 'Remove Outliers (Z-score)',
+                text: 'Removes data points that have a Z-score greater than 3 or less than -3, meaning they are more than 3 standard deviations away from the mean.',
+                short: 'Removes outliers using the Z-score method'
+            },
+            'log_transform': {
+                title: 'Log Transform',
+                text: 'Applies a logarithmic transformation to the data, which can help normalize right-skewed distributions and reduce the impact of outliers.',
+                short: 'Applies logarithmic transformation to normalize data'
+            },
+            'square_transform': {
+                title: 'Square Transform',
+                text: 'Applies a square transformation to the data, which can help emphasize differences between values and is useful for left-skewed distributions.',
+                short: 'Applies square transformation to emphasize differences'
+            },
+            'standard_scaling': {
+                title: 'Standard Scaling',
+                text: 'Standardizes features by removing the mean and scaling to unit variance. The result is a distribution with a mean of 0 and a standard deviation of 1.',
+                short: 'Standardizes data to mean=0 and std=1'
+            },
+            'min_max_scaling': {
+                title: 'Min-Max Scaling',
+                text: 'Transforms features by scaling each feature to a given range, typically [0, 1]. This preserves the shape of the original distribution.',
+                short: 'Scales data to a range between 0 and 1'
+            },
+            'fill_missing_gboost': {
+                title: 'Impute Missing (GBoost)',
+                text: 'Uses Gradient Boosting to predict and fill missing values based on other columns in the dataset. Effective for complex relationships.',
+                short: 'Fills missing values using Gradient Boosting'
+            },
+            'fill_missing_rf': {
+                title: 'Impute Missing (Random Forest)',
+                text: 'Uses Random Forest to predict and fill missing values based on other columns in the dataset. Good for handling non-linear relationships.',
+                short: 'Fills missing values using Random Forest'
+            },
+            'tfidf_vectorization': {
+                title: 'TF-IDF Text Processing',
+                text: 'Converts text data into numerical features using Term Frequency-Inverse Document Frequency. Useful for text analysis and NLP tasks.',
+                short: 'Converts text to numerical features for analysis'
+            },
+            'smote': {
+                title: 'SMOTE (Data Balancing)',
+                text: 'Synthetic Minority Over-sampling Technique creates synthetic samples of the minority class to address class imbalance problems.',
+                short: 'Balances dataset by generating synthetic samples'
+            }
+        };
+        
+        // Update method info
+        if (descriptions[method]) {
+            methodTitle.textContent = descriptions[method].title;
+            methodText.textContent = descriptions[method].text;
+            methodDescription.textContent = descriptions[method].short;
+            methodInfo.style.display = 'block';
+        } else {
+            methodInfo.style.display = 'none';
+        }
+    }
+    
+    // Initialize on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        showMethodInfo();
+        
+        // Add animation classes to elements
+        const animatedElements = document.querySelectorAll('.card, .results-container');
+        animatedElements.forEach((element, index) => {
+            setTimeout(() => {
+                element.style.opacity = '1';
+            }, index * 150);
+        });
+    });
+</script>
+{% endblock %}
+
+
+
+
+
+
+{% comment %} {% extends "base.html" %}
+{% block content %}
+<h2>Advanced Data Preprocessing</h2>
+
+<form method="POST">
+    {% csrf_token %}
+    
+    <label for="column">Select Column:</label>
+    <select name="column" required>
+        {% for column in columns %}
+            <option value="{{ column }}">{{ column }}</option>
+        {% endfor %}
+    </select>
+
+    <label for="method">Select Preprocessing Method:</label>
+    <select name="method" required>
+        <option value="remove_outliers_iqr">Remove Outliers (IQR)</option>
+        <option value="remove_outliers_zscore">Remove Outliers (Z-score)</option>
+        <option value="log_transform">Log Transform</option>
+        <option value="square_transform">Square Transform</option>
+        <option value="standard_scaling">Standard Scaling</option>
+        <option value="min_max_scaling">Min-Max Scaling</option>
+        <option value="fill_missing_gboost">Impute Missing (GBoost)</option>
+        <option value="fill_missing_rf">Impute Missing (Random Forest)</option>
+        <option value="tfidf_vectorization">TF-IDF Text Processing</option>
+        <option value="smote">SMOTE (Data Balancing)</option>
+    </select>
+
+    <button type="submit">Apply</button>
+</form>
+
+{% if plot_html %}
+    <h3>Results for {{ column_name }}</h3>
+    <div>{{ plot_html|safe }}</div>
+{% endif %}
+
+<a href="{% url 'display_csv' %}">Back to Basic Cleaning</a>
+{% endblock %} {% endcomment %}

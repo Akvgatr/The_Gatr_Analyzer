@@ -1,0 +1,130 @@
+{% extends "base.html" %}
+
+{% block content %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/gridstack.js/8.0.0/gridstack.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gridstack.js/8.0.0/gridstack-all.min.js"></script>
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+    <style>
+        body {
+            background-color: #0D0907;
+            color: white;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        h2 {
+            text-align: center;
+            font-size: 2rem;
+            margin-bottom: 20px;
+            color: #f8f8f8;
+        }
+
+        .dashboard-container {
+            width: 90%;
+            margin: auto;
+            padding: 20px;
+        }
+
+        .grid-stack {
+            margin-top: 20px;
+        }
+
+        .grid-stack-item-content {
+            background: #222;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+            color: #ddd;
+            position: relative;
+        }
+
+        .delete-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: red;
+            color: white;
+            border: none;
+            cursor: pointer;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        .delete-btn:hover {
+            background: #cc0000;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>Interactive Data Dashboard</h2>
+
+    <form method="POST">
+        {% csrf_token %}
+        <label>Select Columns:</label>
+        <select name="columns" multiple>
+            {% for column in columns %}
+                <option value="{{ column }}">{{ column }}</option>
+            {% endfor %}
+        </select>
+
+        <label for="num_values">Number of Values:</label>
+        <input type="number" name="num_values" min="1">
+
+        <label>Select Graph:</label>
+        <select name="graph_type">
+            <option value="Bar Graph">Bar Graph</option>
+            <option value="Histogram">Histogram</option>
+            <option value="Line Chart">Line Chart</option>
+            <option value="Scatter Plot">Scatter Plot</option>
+        </select>
+
+        <button type="submit">Add Graph</button>
+    </form>
+
+    <div class="dashboard-container">
+        <div class="grid-stack">
+            {% for graph_html in graph_htmls %}
+                <div class="grid-stack-item" gs-w="4" gs-h="3" data-index="{{ forloop.counter0 }}" id="graph-{{ forloop.counter0 }}">
+                    <div class="grid-stack-item-content">
+                        {{ graph_html|safe }}
+                        <button class="delete-btn" onclick="deleteGraph({{ forloop.counter0 }})">X</button>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            GridStack.init();
+        });
+
+        function deleteGraph(index) {
+            fetch("", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded",
+                    "X-CSRFToken": "{{ csrf_token }}"
+                },
+                body: `delete_index=${index}`
+            }).then(response => {
+                if (response.ok) {
+                    // Remove the deleted graph from the DOM
+                    document.getElementById(`graph-${index}`).remove();
+                } else {
+                    alert("Failed to delete graph.");
+                }
+            }).catch(error => console.error("Error:", error));
+        }
+    </script>
+
+</body>
+</html>
+{% endblock %}

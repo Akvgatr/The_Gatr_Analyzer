@@ -1,0 +1,373 @@
+{% extends "base.html" %}
+
+{% block content %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #4c4eaf;
+            --primary-hover: #373b93;
+            --primary-light: #6a6cce;
+            --dark-bg: #0D0907;
+            --card-bg: #1a1a1a;
+            --card-bg-alt: #222;
+            --text-color: #ffffff;
+            --text-muted: #b3b3b3;
+            --border-color: #333333;
+            --shadow-color: rgba(0, 0, 0, 0.3);
+        }
+
+        body {
+            background-color: var(--dark-bg);
+            background-image: linear-gradient(to bottom right, #0D0907, #1a1a1a);
+            color: var(--text-color);
+            font-family: 'Poppins', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 0;
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        h2 {
+            font-size: 2.5rem;
+            margin-bottom: 30px;
+            color: var(--text-color);
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            position: relative;
+            padding-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        h2:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, var(--primary-color), transparent);
+        }
+
+        h2 i {
+            margin-right: 12px;
+            color: var(--primary-light);
+        }
+
+        .log-container {
+            width: 90%;
+            max-width: 700px;
+            margin: 30px auto;
+            background: linear-gradient(145deg, var(--card-bg), var(--card-bg-alt));
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 15px 35px var(--shadow-color);
+            text-align: left;
+            overflow-y: auto;
+            max-height: 500px;
+            border-top: 4px solid var(--primary-color);
+            animation: slideUp 0.6s ease-out;
+            position: relative;
+        }
+
+        .log-container:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 60px;
+            background: linear-gradient(to bottom, rgba(34, 34, 34, 0.9), transparent);
+            pointer-events: none;
+            z-index: 1;
+            border-radius: 15px 15px 0 0;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .log-container:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 60px;
+            background: linear-gradient(to top, rgba(34, 34, 34, 0.9), transparent);
+            pointer-events: none;
+            z-index: 1;
+            border-radius: 0 0 15px 15px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .log-container.scrolled-top:before {
+            opacity: 0;
+        }
+
+        .log-container.scrolled-bottom:after {
+            opacity: 0;
+        }
+
+        .log-container:hover:before,
+        .log-container:hover:after {
+            opacity: 1;
+        }
+
+        .log-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .log-header i {
+            font-size: 1.5rem;
+            margin-right: 10px;
+            color: var(--primary-light);
+        }
+
+        .log-header h3 {
+            margin: 0;
+            font-size: 1.3rem;
+            color: var(--text-color);
+        }
+
+        .log-entry {
+            padding: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 10px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .log-entry:hover {
+            background: rgba(76, 78, 175, 0.1);
+            transform: translateX(5px);
+        }
+
+        .log-entry:last-child {
+            margin-bottom: 0;
+        }
+
+        .log-entry:before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 3px;
+            background: var(--primary-color);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .log-entry:hover:before {
+            opacity: 1;
+        }
+
+        .log-entry p {
+            margin: 0;
+            font-size: 1rem;
+            line-height: 1.5;
+            word-break: break-word;
+        }
+
+        .btn {
+            display: inline-block;
+            margin-top: 25px;
+            padding: 12px 24px;
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-hover));
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: all 0.6s ease;
+        }
+
+        .btn:hover {
+            background: linear-gradient(135deg, var(--primary-hover), var(--primary-color));
+            transform: translateY(-3px);
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.3);
+        }
+
+        .btn:hover:before {
+            left: 100%;
+        }
+
+        .btn i {
+            margin-right: 8px;
+        }
+
+        .empty-state {
+            padding: 40px 20px;
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            margin: 30px auto;
+            max-width: 500px;
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            color: var(--primary-light);
+            opacity: 0.6;
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #1a1a1a;
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary-color);
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary-hover);
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .container {
+                width: 95%;
+            }
+            
+            h2 {
+                font-size: 2rem;
+            }
+            
+            .log-container {
+                width: 95%;
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+
+<div class="container">
+    <h2><i class="fas fa-database"></i> Stored Tables and Passwords</h2>
+
+    {% if log_content %}
+        <div class="log-container" id="logContainer">
+            <div class="log-header">
+                <i class="fas fa-list-alt"></i>
+                <h3>System Logs</h3>
+            </div>
+            {% for log in log_content %}
+                <div class="log-entry">
+                    <p>{{ log }}</p>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="empty-state">
+            <i class="fas fa-folder-open"></i>
+            <p>No stored tables found.</p>
+        </div>
+    {% endif %}
+
+    <a href="{% url 'homepage' %}" class="btn"><i class="fas fa-home"></i> Back to Home</a>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const logContainer = document.getElementById('logContainer');
+        
+        if (logContainer) {
+            // Add scroll event listener to handle gradient overlays
+            logContainer.addEventListener('scroll', function() {
+                if (logContainer.scrollTop === 0) {
+                    logContainer.classList.add('scrolled-top');
+                } else {
+                    logContainer.classList.remove('scrolled-top');
+                }
+                
+                if (logContainer.scrollHeight - logContainer.scrollTop === logContainer.clientHeight) {
+                    logContainer.classList.add('scrolled-bottom');
+                } else {
+                    logContainer.classList.remove('scrolled-bottom');
+                }
+            });
+            
+            // Trigger scroll event initially
+            logContainer.dispatchEvent(new Event('scroll'));
+            
+            // Add animation to log entries
+            const logEntries = document.querySelectorAll('.log-entry');
+            logEntries.forEach((entry, index) => {
+                entry.style.opacity = '0';
+                entry.style.transform = 'translateY(20px)';
+                
+                setTimeout(() => {
+                    entry.style.transition = 'all 0.5s ease';
+                    entry.style.opacity = '1';
+                    entry.style.transform = 'translateY(0)';
+                }, 100 + (index * 50));
+            });
+        }
+    });
+</script>
+{% endblock %}

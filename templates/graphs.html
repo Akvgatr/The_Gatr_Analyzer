@@ -1,0 +1,792 @@
+{% extends "base.html" %}
+
+{% block content %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<style>
+    :root {
+        --primary-color: #4c4eaf;
+        --primary-hover: #373b93;
+        --primary-light: #6a6cce;
+        --dark-bg: #0D0907;
+        --card-bg: #1a1a1a;
+        --input-bg: #2a2a2a;
+        --text-color: #ffffff;
+        --text-muted: #b3b3b3;
+        --border-color: #333333;
+        --success-color: #2ecc71;
+        --accent-color: #007bff;
+        --accent-hover: #0056b3;
+        --shadow-color: rgba(0, 0, 0, 0.3);
+    }
+
+    body {
+        background-color: var(--dark-bg);
+        background-image: linear-gradient(to bottom right, #0D0907, #1a1a1a);
+        color: var(--text-color);
+        font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        margin: 0;
+        padding: 0;
+        line-height: 1.6;
+        min-height: 100vh;
+    }
+
+    .container {
+        width: 90%;
+        max-width: 1000px;
+        margin: 30px auto;
+        padding: 0 15px;
+        animation: fadeIn 0.8s ease-out;
+    }
+
+    .page-title {
+        text-align: center;
+        font-size: 2.5rem;
+        margin-bottom: 30px;
+        color: var(--text-color);
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        position: relative;
+        padding-bottom: 15px;
+    }
+
+    .page-title:after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 80px;
+        height: 3px;
+        background: linear-gradient(90deg, transparent, var(--primary-color), transparent);
+    }
+
+    .page-title i {
+        margin-right: 10px;
+        color: var(--primary-light);
+    }
+
+    .form-card {
+        background: linear-gradient(145deg, #1a1a1a, #222);
+        padding: 35px;
+        border-radius: 15px;
+        box-shadow: 0 15px 35px var(--shadow-color);
+        margin-bottom: 30px;
+        border-top: 4px solid var(--primary-color);
+        transition: all 0.3s ease;
+        animation: slideUp 0.6s ease-out;
+    }
+
+    .form-card:hover {
+        box-shadow: 0 18px 40px rgba(0, 0, 0, 0.4);
+        transform: translateY(-5px);
+    }
+
+    .form-group {
+        margin-bottom: 25px;
+    }
+
+    .form-label {
+        display: block;
+        margin-bottom: 10px;
+        font-weight: 500;
+        color: var(--text-color);
+        font-size: 1.05rem;
+        letter-spacing: 0.3px;
+    }
+
+    .form-label i {
+        margin-right: 8px;
+        color: var(--primary-light);
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 14px 18px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 10px;
+        background: rgba(42, 42, 42, 0.8);
+        color: var(--text-color);
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+        font-family: 'Poppins', sans-serif;
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: var(--primary-light);
+        box-shadow: 0 0 0 3px rgba(76, 78, 175, 0.25), inset 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .form-control::placeholder {
+        color: var(--text-muted);
+    }
+
+    select.form-control {
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='white' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: calc(100% - 15px) center;
+        padding-right: 40px;
+    }
+
+    select[multiple].form-control {
+        padding: 10px;
+        height: auto;
+        min-height: 140px;
+        background-image: none;
+    }
+
+    select[multiple].form-control option {
+        padding: 8px 10px;
+        margin-bottom: 2px;
+        border-radius: 4px;
+        transition: all 0.2s;
+    }
+
+    select[multiple].form-control option:checked {
+        background: linear-gradient(135deg, var(--primary-color), var(--primary-hover));
+        color: white;
+    }
+
+    select[multiple].form-control option:hover {
+        background-color: rgba(76, 78, 175, 0.1);
+    }
+
+    .btn {
+        display: inline-block;
+        padding: 16px 24px;
+        background: linear-gradient(135deg, var(--primary-color), var(--primary-hover));
+        color: white;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: 1.1rem;
+        font-weight: 600;
+        text-align: center;
+        text-decoration: none;
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+        width: 100%;
+        letter-spacing: 0.5px;
+        position: relative;
+        overflow: hidden;
+        font-family: 'Poppins', sans-serif;
+    }
+
+    .btn:before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+        transition: all 0.6s ease;
+    }
+
+    .btn:hover {
+        background: linear-gradient(135deg, var(--primary-hover), var(--primary-color));
+        transform: translateY(-3px);
+        box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3);
+    }
+
+    .btn:hover:before {
+        left: 100%;
+    }
+
+    .btn:active {
+        transform: translateY(1px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .btn i {
+        margin-right: 8px;
+    }
+
+    .dashboard-link {
+        display: inline-block;
+        text-align: center;
+        margin: 20px auto;
+        padding: 14px 30px;
+        border-radius: 10px;
+        background: linear-gradient(135deg, var(--accent-color), var(--accent-hover));
+        color: white;
+        text-decoration: none;
+        font-size: 1.1rem;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+        position: relative;
+        overflow: hidden;
+        letter-spacing: 0.3px;
+    }
+
+    .dashboard-link:before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+        transition: all 0.6s ease;
+    }
+
+    .dashboard-link:hover {
+        background: linear-gradient(135deg, var(--accent-hover), var(--accent-color));
+        transform: translateY(-3px);
+        box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3);
+    }
+
+    .dashboard-link:hover:before {
+        left: 100%;
+    }
+
+    .dashboard-link i {
+        margin-right: 8px;
+    }
+
+    .form-section {
+        margin-bottom: 30px;
+        padding-bottom: 30px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        animation: fadeIn 0.8s ease-out;
+    }
+
+    .form-section:last-child {
+        border-bottom: none;
+        margin-bottom: 0;
+        padding-bottom: 0;
+    }
+
+    .form-section-title {
+        font-size: 1.3rem;
+        color: var(--primary-light);
+        margin-bottom: 20px;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        letter-spacing: 0.5px;
+    }
+
+    .form-section-title i {
+        margin-right: 10px;
+        font-size: 1.2rem;
+    }
+
+    .input-group {
+        display: flex;
+        gap: 20px;
+    }
+
+    .input-group .form-group {
+        flex: 1;
+    }
+
+    .graph-container {
+        background: linear-gradient(145deg, #1a1a1a, #222);
+        padding: 35px;
+        border-radius: 15px;
+        box-shadow: 0 15px 35px var(--shadow-color);
+        margin-top: 40px;
+        overflow: hidden;
+        transition: all 0.3s ease;
+        animation: slideUp 0.8s ease-out;
+        border-left: 4px solid var(--primary-color);
+    }
+
+    .graph-container:hover {
+        box-shadow: 0 18px 40px rgba(0, 0, 0, 0.4);
+    }
+
+    .graph-container h2 {
+        color: var(--primary-light);
+        margin-top: 0;
+        margin-bottom: 25px;
+        font-size: 1.6rem;
+        font-weight: 600;
+        border-bottom: 2px solid var(--border-color);
+        padding-bottom: 15px;
+        display: flex;
+        align-items: center;
+    }
+
+    .graph-container h2 i {
+        margin-right: 10px;
+    }
+
+    .no-graph-message {
+        text-align: center;
+        color: var(--text-muted);
+        padding: 40px 20px;
+        font-size: 1.1rem;
+        background: rgba(0, 0, 0, 0.2);
+        border-radius: 10px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 15px;
+    }
+
+    .no-graph-message i {
+        font-size: 3rem;
+        color: var(--primary-light);
+        opacity: 0.6;
+    }
+
+    .btn-container {
+        display: flex;
+        justify-content: center;
+        margin-top: 30px;
+    }
+
+    /* Custom scrollbar */
+    ::-webkit-scrollbar {
+        width: 10px;
+    }
+
+    ::-webkit-scrollbar-track {
+        background: #1a1a1a;
+        border-radius: 10px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background: var(--primary-color);
+        border-radius: 10px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+        background: var(--primary-hover);
+    }
+
+    /* Tooltip styles */
+    .tooltip {
+        position: relative;
+        display: inline-block;
+        margin-left: 5px;
+        color: var(--primary-light);
+    }
+
+    .tooltip .tooltiptext {
+        visibility: hidden;
+        width: 200px;
+        background-color: #333;
+        color: #fff;
+        text-align: center;
+        border-radius: 6px;
+        padding: 10px;
+        position: absolute;
+        z-index: 1;
+        bottom: 125%;
+        left: 50%;
+        transform: translateX(-50%);
+        opacity: 0;
+        transition: opacity 0.3s;
+        font-size: 14px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    }
+
+    .tooltip:hover .tooltiptext {
+        visibility: visible;
+        opacity: 1;
+    }
+
+    /* Animations */
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+
+    @keyframes slideUp {
+        from { opacity: 0; transform: translateY(30px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes pulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+        100% { transform: scale(1); }
+    }
+
+    @media (max-width: 768px) {
+        .input-group {
+            flex-direction: column;
+            gap: 0;
+        }
+        
+        .form-card, .graph-container {
+            padding: 25px;
+        }
+        
+        .page-title {
+            font-size: 2rem;
+        }
+    }
+</style>
+
+<div class="container">
+    <h1 class="page-title"><i class="fas fa-chart-line"></i> Graph Generator</h1>
+
+    <div class="form-card">
+        <form method="POST" action="{% url 'generate_graph' %}">
+            {% csrf_token %}
+
+            <div class="form-section">
+                <div class="form-section-title"><i class="fas fa-database"></i> Data Selection</div>
+                <div class="form-group">
+                    <label for="columns" class="form-label"><i class="fas fa-table"></i> Select Columns
+                        <span class="tooltip"><i class="fas fa-info-circle"></i>
+                            <span class="tooltiptext">Select one or more columns to include in your graph</span>
+                        </span>
+                    </label>
+                    <select name="columns" id="columns" multiple class="form-control">
+                        {% for column in columns %}
+                            <option value="{{ column }}">{{ column }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="graph_type" class="form-label"><i class="fas fa-chart-bar"></i> Select Graph Type</label>
+                    <select name="graph_type" id="graph_type" class="form-control">
+                        <option value="Bar Graph">Bar Graph</option>
+                        <option value="Histogram">Histogram</option>
+                        <option value="Line Chart">Line Chart</option>
+                        <option value="Scatter Plot">Scatter Plot</option>
+                        <option value="Pie Chart">Pie Chart</option>
+                        <option value="Box Plot">Box Plot</option>
+                        <option value="Area Chart">Area Chart</option>
+                        <option value="Heatmap">Heatmap</option>
+                        <option value="Bubble Chart">Bubble Chart</option>
+                        <option value="Funnel Chart">Funnel Chart</option>
+                        <option value="Violin Plot">Violin Plot</option>
+                        <option value="Density Contour">Density Contour</option>
+                        <option value="Parallel Coordinates Plot">Parallel Coordinates Plot</option>
+                        <option value="Sunburst Chart">Sunburst Chart</option>
+                        <option value="Map Plot">Map Plot</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <div class="form-section-title"><i class="fas fa-sliders-h"></i> Data Range</div>
+                <div class="form-group">
+                    <label for="top_entries" class="form-label"><i class="fas fa-sort-amount-down"></i> Number of Entries (Top N)
+                        <span class="tooltip"><i class="fas fa-info-circle"></i>
+                            <span class="tooltiptext">Limit the visualization to the top N entries</span>
+                        </span>
+                    </label>
+                    <input type="number" name="top_entries" id="top_entries" placeholder="e.g., 10" class="form-control">
+                </div>
+
+                <div class="input-group">
+                    <div class="form-group">
+                        <label for="range_start" class="form-label"><i class="fas fa-step-forward"></i> Range (Start):</label>
+                        <input type="number" name="range_start" id="range_start" placeholder="Start index" class="form-control">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="range_end" class="form-label"><i class="fas fa-step-backward fa-flip-horizontal"></i> Range (End):</label>
+                        <input type="number" name="range_end" id="range_end" placeholder="End index" class="form-control">
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <div class="form-section-title"><i class="fas fa-filter"></i> Advanced Filtering</div>
+                <div class="form-group">
+                    <label for="filter_column" class="form-label"><i class="fas fa-columns"></i> Column for Min/Max Filtering
+                        <span class="tooltip"><i class="fas fa-info-circle"></i>
+                            <span class="tooltiptext">Select a column to apply minimum and maximum value filters</span>
+                        </span>
+                    </label>
+                    <select name="filter_column" id="filter_column" class="form-control">
+                        <option value="">None</option>
+                        {% for column in columns %}
+                            <option value="{{ column }}">{{ column }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="input-group">
+                    <div class="form-group">
+                        <label for="min_value" class="form-label"><i class="fas fa-arrow-down"></i> Min Value:</label>
+                        <input type="number" name="min_value" id="min_value" step="any" class="form-control" placeholder="Minimum value">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="max_value" class="form-label"><i class="fas fa-arrow-up"></i> Max Value:</label>
+                        <input type="number" name="max_value" id="max_value" step="any" class="form-control" placeholder="Maximum value">
+                    </div>
+                </div>
+            </div>
+
+            <button type="submit" class="btn"><i class="fas fa-magic"></i> Generate Graph</button>
+        </form>
+    </div>
+
+    <div class="btn-container">
+        <a href="{% url 'dashboard' %}" class="dashboard-link"><i class="fas fa-tachometer-alt"></i> Go to Dashboard</a>
+    </div>
+
+    {% if graph_html %}
+        <div class="graph-container">
+            <h2><i class="fas fa-chart-area"></i> Generated Graph</h2>
+            <div>{{ graph_html|safe }}</div>
+        </div>
+    {% else %}
+        <div class="graph-container">
+            <h2><i class="fas fa-chart-area"></i> Graph Preview</h2>
+            <div class="no-graph-message">
+                <i class="fas fa-chart-pie"></i>
+                <p>No graph available yet. Please select your options and generate one.</p>
+            </div>
+        </div>
+    {% endif %}
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Add animation classes to elements as they load
+        const animatedElements = document.querySelectorAll('.form-section, .graph-container');
+        animatedElements.forEach((element, index) => {
+            setTimeout(() => {
+                element.style.opacity = '1';
+            }, index * 150);
+        });
+        
+        // Add event listeners for form controls
+        const formControls = document.querySelectorAll('.form-control');
+        formControls.forEach(control => {
+            control.addEventListener('focus', function() {
+                this.parentElement.classList.add('focused');
+            });
+            
+            control.addEventListener('blur', function() {
+                this.parentElement.classList.remove('focused');
+            });
+        });
+        
+        // Add filter column dependency
+        const filterColumn = document.getElementById('filter_column');
+        const minValue = document.getElementById('min_value');
+        const maxValue = document.getElementById('max_value');
+        
+        function updateFilterFields() {
+            const isDisabled = filterColumn.value === '';
+            minValue.disabled = isDisabled;
+            maxValue.disabled = isDisabled;
+            
+            if (isDisabled) {
+                minValue.parentElement.style.opacity = '0.6';
+                maxValue.parentElement.style.opacity = '0.6';
+            } else {
+                minValue.parentElement.style.opacity = '1';
+                maxValue.parentElement.style.opacity = '1';
+            }
+        }
+        
+        filterColumn.addEventListener('change', updateFilterFields);
+        updateFilterFields(); // Initialize on page load
+    });
+</script>
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{% comment %} {% extends "base.html" %}
+
+{% block content %}
+<style>
+    body {
+        background-color: #0D0907;
+        color: white;
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+    }
+
+    h1 {
+        text-align: center;
+        font-size: 2rem;
+        margin-bottom: 20px;
+        color: #f8f8f8;
+    }
+
+    form {
+        width: 80%;
+        max-width: 600px;
+        margin: 20px auto;
+        background: #222;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+    }
+
+    label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: bold;
+        color: #ddd;
+    }
+
+    select, input {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 15px;
+        border: 1px solid #666;
+        border-radius: 5px;
+        background: #333;
+        color: white;
+    }
+
+    button {
+        width: 100%;
+        padding: 10px;
+        background-color: #4c4eaf;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: 0.3s;
+        font-size: 16px;
+        font-weight: bold;
+    }
+
+    button:hover {
+        background-color: #373b93;
+    }
+
+    .dashboard-link {
+        display: block;
+        text-align: center;
+        margin-top: 20px;
+        padding: 10px 20px;
+        border-radius: 10px;
+        background-color: #007bff;
+        color: white;
+        text-decoration: none;
+        font-size: 18px;
+    }
+</style>
+
+<h1>Graph Generator</h1>
+
+<form method="POST" action="{% url 'generate_graph' %}">
+    {% csrf_token %}
+
+    <label for="columns">Select Columns:</label>
+    <select name="columns" id="columns" multiple>
+        {% for column in columns %}
+            <option value="{{ column }}">{{ column }}</option>
+        {% endfor %}
+    </select>
+
+    <label for="graph_type">Select Graph Type:</label>
+    <select name="graph_type" id="graph_type">
+        <option value="Bar Graph">Bar Graph</option>
+        <option value="Histogram">Histogram</option>
+        <option value="Line Chart">Line Chart</option>
+        <option value="Scatter Plot">Scatter Plot</option>
+        <option value="Pie Chart">Pie Chart</option>
+        <option value="Box Plot">Box Plot</option>
+        <option value="Area Chart">Area Chart</option>
+        <option value="Heatmap">Heatmap</option>
+        <option value="Bubble Chart">Bubble Chart</option>
+        <option value="Funnel Chart">Funnel Chart</option>
+        <option value="Violin Plot">Violin Plot</option>
+        <option value="Density Contour">Density Contour</option>
+        <option value="Parallel Coordinates Plot">Parallel Coordinates Plot</option>
+        <option value="Sunburst Chart">Sunburst Chart</option>
+        <option value="Map Plot">Map Plot</option>
+    </select>
+
+    <label for="top_entries">Select Number of Entries (Top N):</label>
+    <input type="number" name="top_entries" id="top_entries" placeholder="e.g., 10">
+
+    <label for="range_start">Select Range (Start):</label>
+    <input type="number" name="range_start" id="range_start" placeholder="Start">
+    
+    <label for="range_end">Select Range (End):</label>
+    <input type="number" name="range_end" id="range_end" placeholder="End">
+
+    <button type="submit">Generate Graph</button>
+
+    <br>
+
+    <label for="filter_column">Select Column for Min/Max Filtering:</label>
+    <select name="filter_column" id="filter_column">
+        <option value="">None</option>
+        {% for column in columns %}
+            <option value="{{ column }}">{{ column }}</option>
+        {% endfor %}
+    </select>
+
+    <label for="min_value">Min Value:</label>
+    <input type="number" name="min_value" id="min_value" step="any">
+
+    <label for="max_value">Max Value:</label>
+    <input type="number" name="max_value" id="max_value" step="any">
+
+    <br>
+
+</form>
+
+<a href="{% url 'dashboard' %}" class="dashboard-link">Go to Dashboard</a>
+
+{% if graph_html %}
+    <h2>Generated Graph:</h2>
+    <div>{{ graph_html|safe }}</div>
+{% else %}
+    <p style="text-align: center;">No graph available. Please generate one.</p>
+{% endif %}
+
+{% endblock %} {% endcomment %}

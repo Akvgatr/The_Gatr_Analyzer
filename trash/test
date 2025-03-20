@@ -1,0 +1,59 @@
+{% comment %} {% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{title}}</title>
+</head>
+<body>
+    <h1>welcome bhai</h1>
+    
+  <div>ham mast hai {{mast}}</div>
+
+
+{% for n in clist %}
+<div>{{forloop.counter0}}{{n}} </div>
+{% endfor %}
+
+{% comment %} for dictionary {% endcomment %}
+    
+{% comment %} 
+<table border="1" cellpadding="10">
+
+   <tr>
+          <th>name</th>
+          <th>lname</th>
+   </tr>
+
+
+{%for d in details%}
+    <tr>
+        <td>{{d.name}}</td>        
+        <td>{{d.lname}}</td>
+    </tr>
+{%endfor%}
+
+
+
+{%if numbers|length > 0 %}
+
+    {% for n in numbers %}
+
+         {% if n > 20 %}
+          <div>{{n}} </div>
+         {% endif %}
+    {%endfor%}
+
+{%else%}
+    no data , tera kat gaya
+{%endif%}
+
+</table>
+
+</body>
+</html>  {% endcomment %}
+
+
+
+
