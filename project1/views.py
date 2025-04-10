@@ -664,18 +664,18 @@ def graphs_view(request):
 
 
 
-import MySQLdb  
-def get_mysql_connection():
-    """Establish connection to MySQL database."""
-    return MySQLdb.connect(
-        host='127.0.0.1',
-        port=3307,        
-        user='rootuser',  
-        password='Gangayamuna@123',  
-        database='django_data_analysis',  
-        charset='utf8mb4',  
-        use_unicode=True
-    )
+# import MySQLdb  
+# def get_mysql_connection():
+#     """Establish connection to MySQL database."""
+#     return MySQLdb.connect(
+#         host='127.0.0.1',
+#         port=3307,        
+#         user='rootuser',  
+#         password='Gangayamuna@123',  
+#         database='django_data_analysis',  
+#         charset='utf8mb4',  
+#         use_unicode=True
+#     )
 
 import pandas as pd
 import io
@@ -686,22 +686,62 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+# def get_mysql_connection():
+#     """Establish a connection to the MySQL database."""
+#     try:
+#         conn = MySQLdb.connect(
+#             host="127.0.0.1",  
+#             user="rootuser",
+#             password="Gangayamuna@123",
+#             database="django_data_analysis",
+#             port=3307, 
+#             charset="utf8mb4"
+#         )
+#         return conn
+#     except MySQLdb.Error as e:
+#         logger.error(f"MySQL Connection Error: {e}")
+#         print(f"MySQL Connection Error: {e}") 
+#         return None
+
+
+
+
+import os
+import MySQLdb
+import logging
+from dotenv import load_dotenv
+
+# Load .env from parent directory of this file (project1/..)
+env_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), '.env')
+load_dotenv(dotenv_path=env_path)
+
+logger = logging.getLogger(__name__)
+
 def get_mysql_connection():
-    """Establish a connection to the MySQL database."""
+    """Establish a connection to the MySQL database using .env environment variables."""
     try:
         conn = MySQLdb.connect(
-            host="127.0.0.1",  
-            user="rootuser",
-            password="Gangayamuna@123",
-            database="django_data_analysis",
-            port=3307, 
+            host=(os.environ.get('MYSQL_HOST') or '').strip(),
+            user=(os.environ.get('MYSQL_USER') or '').strip(),
+            password=(os.environ.get('MYSQL_PASSWORD') or '').strip(),
+            database=(os.environ.get('MYSQL_NAME') or '').strip(),
+            port=int((os.environ.get('MYSQL_PORT') or '3306').strip()),
             charset="utf8mb4"
         )
         return conn
     except MySQLdb.Error as e:
         logger.error(f"MySQL Connection Error: {e}")
-        print(f"MySQL Connection Error: {e}") 
+        print(f"MySQL Connection Error: {e}")
         return None
+
+
+
+
+
+
+
+
+
 
 
 import random
