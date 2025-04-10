@@ -419,6 +419,7 @@
 <div class="container">
     <h1><i class="fas fa-broom"></i> Data Cleaning & Transformation</h1>
 
+
     <!-- Main Cleaning Form -->
     <div class="card">
         <div class="card-header">
@@ -438,24 +439,86 @@
                 </select>
             </div>
 
-            <div class="form-group">
-                <label for="method"><i class="fas fa-magic"></i> Select Cleaning Method</label>
-                <select name="method" id="method" onchange="toggleOptions()">
-                    <option value="">None</option>
-                    <option value="SortAscending">Sorting Ascending</option>
-                    <option value="SortDescending">Sorting Descending</option>
-                    <option value="DropCols">Drop Column</option>
-                    <option value="SetIndex">Set Index</option>
-                    <option value="DropDuplicates">Drop Duplicates</option>
-                    <option value="Replace">Replace</option>
-                    <option value="Fillna">Fill NaN Values</option>
-                    <option value="DropRowIf">Drop Row If</option>
-                    <option value="DropNullRows">Drop Null Rows</option>
-                    <option value="ResetIndex">Reset Index</option>
-                    <option value="Trim">Trim</option>
-                    <option value="ChangeTypeCol">Change Column Type</option>
-                </select>
-            </div>
+
+<div class="form-group">
+    <label for="method"><i class="fas fa-magic"></i> Select Cleaning Method</label>
+    <select name="method" id="method" onchange="toggleOptions()">
+        <option value="">None</option>
+        <option value="SortAscending">Sorting Ascending</option>
+        <option value="SortDescending">Sorting Descending</option>
+        <option value="DropCols">Drop Column</option>
+        <option value="DropDuplicates">Drop Duplicates</option>
+        <option value="Replace">Replace</option>
+        {% comment %} <option value="Fillnana">Fill NaN Values</option> {% endcomment %}
+        {% comment %} <option value="DropRowIf">Drop Row If</option> {% endcomment %}
+        <option value="DropNullRows">Drop Null Rows</option>
+ <option value="Fillnan">Fill NaN with Mean</option>
+<option value="FillnanMean">Fill NaN with Mean</option>
+<option value="FillnanMedian">Fill NaN with Median</option>
+<option value="FillnanMode">Fill NaN with Mode</option> 
+<option value="FillnanMostFrequent">Fill NaN with Most Frequent</option> 
+<option value="FillnanBfill">Fill NaN with Bfill</option>
+<option value="FillnanForwardfill">Fill NaN with Ffill</option> 
+        <option value="UppercaseFirst">Uppercase First Letter</option>
+        <option value="LowercaseFirst">Lowercase First Letter</option>
+        <option value="Uppercase">Uppercase All</option>
+        <option value="Lowercase">Lowercase All</option>
+        <option value="RemoveSpaces">Remove All Spaces</option>
+        <option value="TrimSpaces">Trim Spaces</option>
+    {% comment %} <option value="ConvertDataType">Convert Data Type</option> {% endcomment %}
+<option value="AddTrailingSpace">Add Trailing Space</option>
+
+    <option value="RemovePunctuation">Remove Punctuation</option>
+<option value="RemoveAlphabets">Remove alphabets</option>
+
+    <option value="TextLength">Text Length</option>
+    <option value="Normalize">Normalize</option>
+            <option value="ExtractDate">Extract Day from Date</option>
+        <option value="ExtractMonth">Extract Month from Date</option>
+        <option value="ExtractYear">Extract Year from Date</option>
+    </select>
+</div>
+
+
+
+<!-- New Field Groups -->
+<div id="targetTypeGroup" style="display:none;">
+    <label for="targetType">Target Data Type:</label>
+    <select name="target_type" id="targetType">
+        <option value="str">String</option>
+        <option value="int">Integer</option>
+        <option value="float">Float</option>
+        <option value="datetime">Datetime</option>
+    </select>
+</div>
+
+
+
+<div id="replGroup" style="display:none;">
+    <label for="repl">Replacement:</label>
+    <input type="text" name="repl" id="repl">
+</div>
+
+
+
+
+
+<div id="newColumnsGroup" style="display:none;">
+    <label for="newColumns">New Column Names:</label>
+    <input type="text" name="new_columns" id="newColumns">
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
 
             <!-- Dropdown for selecting the new type -->
             <div id="typeSelect" style="display:none;" class="form-group">
@@ -472,23 +535,7 @@
                 </select>
             </div>
 
-            <!-- Additional options for Fillna -->
-            <div id="fillna-options" style="display: none;" class="form-group">
-                <label for="fill_method"><i class="fas fa-fill-drip"></i> Fill Method</label>
-                <select name="fill_method" id="fill_method">
-                    <option value="value">Replace with Value</option>
-                    <option value="mean">Mean</option>
-                    <option value="median">Median</option>
-                    <option value="mode">Mode</option>
-                    <option value="ffill">Forward Fill</option>
-                    <option value="bfill">Backward Fill</option>
-                </select>
 
-                <div id="fill_value_container" style="display: none; margin-top: 15px;">
-                    <label for="fill_value"><i class="fas fa-keyboard"></i> Fill Value</label>
-                    <input type="text" name="fill_value" id="fill_value" placeholder="Enter value">
-                </div>
-            </div>
 
             <!-- Replace options -->
             <div class="form-group" id="replace-options">
@@ -498,32 +545,32 @@
                 <label for="new_expr"><i class="fas fa-pen"></i> New Expression (for Replace)</label>
                 <input type="text" name="new_expr" id="new_expr" placeholder="Replacement value">
             </div>
-
+   
+   
+   
+   
+   
+   
+   
             <!-- DropRowIf options -->
-            <div id="dropRowIfOptions" style="display: none;" class="form-group">
-                <label for="condition"><i class="fas fa-not-equal"></i> Condition</label>
-                <select name="condition" id="condition">
-                    <option value="==">Equal to (==)</option>
-                    <option value="!=">Not equal to (!=)</option>
-                    <option value=">">Greater than (>)</option>
-                    <option value="<">Less than (<)</option>
-                    <option value=">=">Greater than or equal to (>=)</option>
-                    <option value="<=">Less than or equal to (<=)</option>
-                </select>
+<div id="dropRowIfOptions" style="display: none;" class="form-group">
+    <label for="dropRowCondition"><i class="fas fa-not-equal"></i> Condition</label>
+    <select name="condition" id="dropRowCondition">
+        <option value="==">Equal to (=)</option>
+        <option value="!=">Not equal to (!=)</option>
+        <option value=">">Greater than (&gt;)</option>
+        <option value="<">Less than (&lt;)</option>
+        <option value=">=">Greater than or equal to (&ge;)</option>
+        <option value="<=">Less than or equal to (&le;)</option>
+        <option value="contains">Contains</option>
+        <option value="startswith">Starts with</option>
+        <option value="endswith">Ends with</option>
+    </select>
 
-                <label for="expr"><i class="fas fa-code"></i> Expression</label>
-                <input type="text" name="expr" id="expr" placeholder="Value to compare against">
-            </div>
+    <label for="dropRowExpr"><i class="fas fa-code"></i> Expression</label>
+    <input type="text" name="expr" id="dropRowExpr" placeholder="Enter value (text or number)">
+</div>
 
-            <!-- Trim options -->
-            <div class="form-group">
-                <label for="trim_side"><i class="fas fa-cut"></i> Trim Side (for Trim)</label>
-                <select name="trim_side" id="trim_side">
-                    <option value="Left">Left</option>
-                    <option value="Right">Right</option>
-                    <option value="Both">Both</option>
-                </select>
-            </div>
 
             <button type="submit"><i class="fas fa-check-circle"></i> Apply Cleaning</button>
         </form>
@@ -560,8 +607,23 @@
         </form>
     </div>
 
+<div class="card">
+    <div class="card-header">
+        <i class="fas fa-list-ol"></i>
+        <h2>Add Zero Column</h2>
+    </div>
+    <form method="POST">
+        {% csrf_token %}
+        <div class="form-group" style="display: flex; align-items: center;">
+            <input type="checkbox" name="add_zero_column" value="yes" id="add_zero_column" style="width: auto; margin-right: 10px;">
+            <label for="add_zero_column" style="display: inline; margin: 0;">Add Zero Column</label>
+        </div>
+        <button type="submit"><i class="fas fa-plus-circle"></i> Apply Changes</button>
+    </form>
+</div>
+
     <!-- Filter Column Form -->
-    <div class="card">
+    {% comment %} <div class="card">
         <div class="card-header">
             <i class="fas fa-filter"></i>
             <h2>Data Filtering</h2>
@@ -569,36 +631,6 @@
         <form method="POST">
             {% csrf_token %}
             
-            <div class="section-divider">
-                <span><i class="fas fa-filter"></i> Basic Filtering</span>
-            </div>
-            
-            <div class="form-group">
-                <label for="filter_column"><i class="fas fa-columns"></i> Filter Column</label>
-                <select name="filter_column">
-                    {% for col in columns %}
-                    <option value="{{ col }}">{{ col }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label for="filter_condition"><i class="fas fa-not-equal"></i> Condition</label>
-                <select name="filter_condition">
-                    <option value="=">=</option>
-                    <option value=">">&gt;</option>
-                    <option value="<">&lt;</option>
-                    <option value=">=">&ge;</option>
-                    <option value="<=">&le;</option>
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label for="filter_value"><i class="fas fa-keyboard"></i> Value</label>
-                <input type="text" name="filter_value" placeholder="Enter filter value">
-            </div>
-
-            <button type="submit" name="action" value="filter"><i class="fas fa-filter"></i> Apply Filter</button>
 
             <div class="section-divider">
                 <span><i class="fas fa-calculator"></i> Arithmetic Filtering</span>
@@ -616,6 +648,8 @@
             <div class="form-group">
                 <label for="filter_op"><i class="fas fa-calculator"></i> Operation</label>
                 <select name="filter_op">
+                    <option value="">None</option>
+
                     <option value="add">+ (Addition)</option>
                     <option value="subtract">- (Subtraction)</option>
                     <option value="multiply">* (Multiplication)</option>
@@ -641,6 +675,144 @@
                     <option value="<">&lt;</option>
                     <option value=">=">&ge;</option>
                     <option value="<=">&le;</option>
+        <option value="!=">Not equal to (!=)</option>
+
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="filter_value"><i class="fas fa-keyboard"></i> Value</label>
+                <input type="text" name="filter_value" placeholder="Enter comparison value">
+            </div>
+
+            <button type="submit" name="action" value="arithmetic_filter"><i class="fas fa-calculator"></i> Apply Arithmetic Filter</button>
+
+            <div class="section-divider">
+                <span><i class="fas fa-font"></i> Text Filtering</span>
+            </div>
+
+            <div class="form-group">
+                <label for="column_name"><i class="fas fa-columns"></i> Column</label>
+                <select name="column_name">
+                    {% for col in columns %}
+                    <option value="{{ col }}">{{ col }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="search_query"><i class="fas fa-search"></i> Search</label>
+                <input type="text" name="search_query" placeholder="Enter text to search">
+            </div>
+            
+            <button type="submit" name="action" value="text_filter"><i class="fas fa-search"></i> Apply Text Filter</button>
+        </form>
+    </div> {% endcomment %}
+
+
+
+
+    <div class="card">
+        <div class="card-header">
+            <i class="fas fa-filter"></i>
+            <h2>Data Filtering</h2>
+        </div>
+        <form method="POST">
+            {% csrf_token %}
+
+
+        <div class="section-divider">
+            <span><i class="fas fa-chart-bar"></i> Range Filtering</span>
+        </div>
+
+        <div class="form-group">
+            <label for="range_column"><i class="fas fa-table"></i> Column for Range</label>
+            <select name="range_column">
+                <option value="">Select Column</option>
+                {% for col in columns %}
+                <option value="{{ col }}">{{ col }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group half-width">
+                <label for="range_min"><i class="fas fa-arrow-down"></i> Minimum Value</label>
+                <input type="text" name="range_min" placeholder="Min value (optional)">
+            </div>
+            <div class="form-group half-width">
+                <label for="range_max"><i class="fas fa-arrow-up"></i> Maximum Value</label>
+                <input type="text" name="range_max" placeholder="Max value (optional)">
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group half-width">
+                <label for="row_start"><i class="fas fa-arrow-right"></i> Start Row Index</label>
+                <input type="number" name="row_start" placeholder="Start row (optional)" min="0">
+            </div>
+            <div class="form-group half-width">
+                <label for="row_end"><i class="fas fa-arrow-left"></i> End Row Index</label>
+                <input type="number" name="row_end" placeholder="End row (optional)" min="0">
+            </div>
+        </div>
+
+        <button type="submit" name="action" value="range_filter">
+            <i class="fas fa-filter"></i> Apply Range Filter
+        </button>
+
+
+
+
+
+
+
+
+            <div class="section-divider">
+                <span><i class="fas fa-calculator"></i> Arithmetic Filtering</span>
+            </div>
+
+            <div class="form-group">
+                <label for="filter_col1"><i class="fas fa-table"></i> Column 1</label>
+                <select name="filter_col1">
+                    {% for col in columns %}
+                    <option value="{{ col }}">{{ col }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="filter_op"><i class="fas fa-calculator"></i> Operation</label>
+                <select name="filter_op">
+                    <option value="">None</option>
+
+                    <option value="add">+ (Addition)</option>
+                    <option value="subtract">- (Subtraction)</option>
+                    <option value="multiply">* (Multiplication)</option>
+                    <option value="divide">/ (Division)</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="filter_col2"><i class="fas fa-table"></i> Column 2</label>
+                <select name="filter_col2">
+                    <option>None</option>
+                    {% for col in columns %}
+                    <option value="{{ col }}">{{ col }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="filter_condition"><i class="fas fa-not-equal"></i> Condition</label>
+                <select name="filter_condition">
+                    <option value="=">=</option>
+                    <option value=">">&gt;</option>
+                    <option value="<">&lt;</option>
+                    <option value=">=">&ge;</option>
+                    <option value="<=">&le;</option>
+        <option value="!=">Not equal to (!=)</option>
+
                 </select>
             </div>
 
@@ -672,6 +844,14 @@
             <button type="submit" name="action" value="text_filter"><i class="fas fa-search"></i> Apply Text Filter</button>
         </form>
     </div>
+
+
+
+
+
+
+
+
 
     <!-- Add a New Column -->
     <div class="card">
@@ -810,24 +990,70 @@ function toggleOptions() {
     let fillValue = document.getElementById("fill_value");
     let fillValueContainer = document.getElementById("fill_value_container");
     let dropRowIfOptions = document.getElementById("dropRowIfOptions");
+    let replaceOptions = document.getElementById("replace-options");
 
-    // Show type selection dropdown only for ChangeTypeCol
-    typeSelect.style.display = (method === "ChangeTypeCol") ? "block" : "none";
-    // Show Fillna options if selected
-    fillnaOptions.style.display = (method === "Fillna") ? "block" : "none";
+    // New elements for additional methods
+    let targetTypeGroup = document.getElementById("targetTypeGroup");
+    let patternGroup = document.getElementById("patternGroup");
+    let replGroup = document.getElementById("replGroup");
+    let separatorGroup = document.getElementById("separatorGroup");
+    let newColumnsGroup = document.getElementById("newColumnsGroup");
+    let mappingGroup = document.getElementById("mappingGroup");
 
-    // Show DropRowIf options if selected
-    dropRowIfOptions.style.display = (method === "DropRowIf") ? "block" : "none";
+    // Reset all hidden groups
+    const hiddenGroups = [
+        typeSelect, fillnaOptions, dropRowIfOptions, replaceOptions,
+        targetTypeGroup, patternGroup, replGroup, 
+        separatorGroup, newColumnsGroup, mappingGroup
+    ];
+    hiddenGroups.forEach(group => {
+        if (group) group.style.display = "none";
+    });
 
-    // Handle fill value display based on fill method
-    if (method === "Fillna") {
-        // Initial setup for fill value display
-        fillValueContainer.style.display = (fillMethod.value === "value") ? "block" : "none";
+    // Show specific groups based on method
+    switch(method) {
+        case "ChangeTypeCol":
+            if (typeSelect) typeSelect.style.display = "block";
+            break;
         
-        // Add event listener for changes to fill method
-        fillMethod.addEventListener("change", function() {
-            fillValueContainer.style.display = (this.value === "value") ? "block" : "none";
-        });
+        case "FillNa":
+            if (fillnaOptions) fillnaOptions.style.display = "block";
+            
+            // Handle fill value display based on fill method
+            if (fillMethod && fillValueContainer) {
+                fillMethod.addEventListener("change", function() {
+                    fillValueContainer.style.display = (this.value === "value") ? "block" : "none";
+                });
+                fillValueContainer.style.display = (fillMethod.value === "value") ? "block" : "none";
+            }
+            break;
+        
+        case "DropRowIf":
+            if (dropRowIfOptions) dropRowIfOptions.style.display = "block";
+            break;
+        
+        case "Replace":
+            if (replaceOptions) replaceOptions.style.display = "block";
+            break;
+        
+        // New methods
+        case "ConvertDataType":
+            if (targetTypeGroup) targetTypeGroup.style.display = "block";
+            break;
+        
+        case "ReplaceRegex":
+            if (patternGroup) patternGroup.style.display = "block";
+            if (replGroup) replGroup.style.display = "block";
+            break;
+        
+        case "SplitColumn":
+            if (separatorGroup) separatorGroup.style.display = "block";
+            if (newColumnsGroup) newColumnsGroup.style.display = "block";
+            break;
+        
+        case "MapValues":
+            if (mappingGroup) mappingGroup.style.display = "block";
+            break;
     }
 }
 
@@ -854,6 +1080,12 @@ document.addEventListener('DOMContentLoaded', function() {
             this.parentElement.classList.remove('focused');
         });
     });
+
+    // Ensure method select has event listener
+    const methodSelect = document.getElementById('method');
+    if (methodSelect) {
+        methodSelect.addEventListener('change', toggleOptions);
+    }
 });
 </script>
 </div>
@@ -864,486 +1096,3 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-{% comment %} {% extends "base.html" %}
-
-{% block content %}
-<style>
-    body {
-        background-color: #0D0907;
-        color: white;
-        font-family: Arial, sans-serif;
-        margin: 0;
-        padding: 0;
-    }
-
-    h1 {
-        text-align: center;
-        font-size: 2rem;
-        margin-bottom: 20px;
-        color: #f8f8f8;
-    }
-
-    form {
-        width: 80%;
-        max-width: 600px;
-        margin: 20px auto;
-        background: #222;
-        padding: 20px;
-        border-radius: 10px;
-        box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
-    }
-
-    label {
-        display: block;
-        margin-bottom: 8px;
-        font-weight: bold;
-        color: #ddd;
-    }
-
-    select, input {
-        width: 100%;
-        padding: 10px;
-        margin-bottom: 15px;
-        border: 1px solid #666;
-        border-radius: 5px;
-        background: #333;
-        color: white;
-    }
-
-    button {
-        width: 100%;
-        padding: 10px;
-        background-color: #4c4eaf;
-        color: white;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        transition: 0.3s;
-        font-size: 16px;
-        font-weight: bold;
-    }
-
-    button:hover {
-        background-color: #373b93;
-    }
-
-    table {
-        width: 90%;
-        margin: 30px auto;
-        border-collapse: collapse;
-        box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
-    }
-
-    th, td {
-        padding: 12px;
-        text-align: left;
-        border-bottom: 1px solid #444;
-    }
-
-    th {
-        background-color: #4c4eaf;
-        color: white;
-        font-weight: bold;
-    }
-
-    tr:nth-child(even) {
-        background-color: #1a1a1a;
-    }
-
-    tr:nth-child(odd) {
-        background-color: #222;
-    }
-
-    hr {
-        border: 0;
-        height: 2px;
-        background: #666;
-        margin: 30px auto;
-        width: 80%;
-    }
-        .center-container {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 6vh;
-      text-align: center;
-    }
-
-</style>
-
-<h1> Data Cleaning & Transformation</h1>
-
-<!-- Cleaning Form -->
-<form method="POST" action="{% url 'display_csv' %}">
-    {% csrf_token %}
-    <label for="column">Select Column:</label>
-    <select name="column" id="column">
-            <option value="">None</option>  <!-- New Option -->
-
-        {% for column in columns %}
-
-            <option value="{{ column }}">{{ column }}</option>
-        {% endfor %}
-    </select>
-
-
-
-
-
-
-
-
-
-
-<label for="method">Select Cleaning Method:</label>
-<select name="method" id="method" onchange="toggleOptions()">
-    <option value="">None</option>
-    <option value="SortAscending">Sorting Ascending</option>
-    <option value="SortDescending">Sorting Descending</option>
-    <option value="DropCols">Drop Column</option>
-    <option value="SetIndex">Set Index</option>
-    <option value="DropDuplicates">Drop Duplicates</option>
-    <option value="Replace">Replace</option>
-    <option value="Fillna">Fill NaN Values</option>
-    <option value="DropRowIf">Drop Row If</option>
-    <option value="DropNullRows">Drop Null Rows</option>
-    <option value="ResetIndex">Reset Index</option>
-    <option value="Trim">Trim</option>
-    <option value="ChangeTypeCol">Change Column Type</option>
-</select>
-
-<!-- Dropdown for selecting the new type -->
-<div id="typeSelect" style="display:none; margin-top: 10px;">
-    <label for="new_type">Select New Type:</label>
-    <select name="new_type" id="new_type">
-        <option value="str">String</option>
-        <option value="int">Integer</option>
-        <option value="float">Float</option>
-        <option value="bool">Boolean</option>
-        <option value="complex">Complex</option>
-        <option value="category">Category</option>
-        <option value="datetime">DateTime</option>
-        <option value="object">Object</option>
-    </select>
-</div>
-
-<!-- Additional options for Fillna -->
-<div id="fillna-options" style="display: none; margin-top: 10px;">
-    <label for="fill_method">Fill Method:</label>
-    <select name="fill_method" id="fill_method">
-        <option value="value">Replace with Value</option>
-        <option value="mean">Mean</option>
-        <option value="median">Median</option>
-        <option value="mode">Mode</option>
-        <option value="ffill">Forward Fill</option>
-        <option value="bfill">Backward Fill</option>
-    </select>
-
-    <input type="text" name="fill_value" id="fill_value" placeholder="Enter value" style="display: none; margin-left: 10px;">
-</div>
-
-
-<script>
-function toggleOptions() {
-    let method = document.getElementById("method").value;
-    let typeSelect = document.getElementById("typeSelect");
-    let fillnaOptions = document.getElementById("fillna-options");
-    let fillMethod = document.getElementById("fill_method");
-    let fillValue = document.getElementById("fill_value");
-    let dropRowIfOptions = document.getElementById("dropRowIfOptions");
-
-    // Show type selection dropdown only for ChangeTypeCol
-    typeSelect.style.display = (method === "ChangeTypeCol") ? "block" : "none";
-
-    // Show Fillna options if selected
-    fillnaOptions.style.display = (method === "Fillna") ? "block" : "none";
-
-    // Show DropRowIf options if selected
-    dropRowIfOptions.style.display = (method === "DropRowIf") ? "block" : "none";
-
-    // Show or hide fill value input when "Replace with Value" is selected
-    if (fillMethod) {
-        fillMethod.addEventListener("change", function () {
-            fillValue.style.display = (fillMethod.value === "value") ? "inline-block" : "none";
-        });
-    }
-}
-
-</script>
-
-
-
-
-
-
-
-
-
-
-
-
-
-    <label for="old_expr">Old Expression (for Replace):</label>
-    <input type="text" name="old_expr" id="old_expr">
-
-    <label for="new_expr">New Expression (for Replace):</label>
-    <input type="text" name="new_expr" id="new_expr">
-
-<div id="dropRowIfOptions" style="display: none; margin-top: 10px;">
-    <label for="condition">Condition:</label>
-    <select name="condition" id="condition">
-        <option value="==">Equal to (==)</option>
-        <option value="!=">Not equal to (!=)</option>
-        <option value=">">Greater than (>)</option>
-        <option value="<">Less than (<)</option>
-        <option value=">=">Greater than or equal to (>=)</option>
-        <option value="<=">Less than or equal to (<=)</option>
-    </select>
-
-    <label for="expr">Expression:</label>
-    <input type="text" name="expr" id="expr">
-</div>
-
-    <label for="trim_side">Trim Side (for Trim):</label>
-    <select name="trim_side" id="trim_side">
-        <option value="Left">Left</option>
-        <option value="Right">Right</option>
-        <option value="Both">Both</option>
-    </select>
-
-    <button type="submit">Apply Cleaning</button>
-</form>
-
-
-
-
-
-
-<!-- Undo/Redo Buttons -->
-<form method="POST" action="{% url 'display_csv' %}">
-    {% csrf_token %}
-    <button type="submit" name="action" value="undo">Undo</button>
-    <br>
-    <button type="submit" name="action" value="redo">Redo</button>
-</form>
-
-
-
-
-
-
-
-<!-- Add Serial Column -->
-<form method="POST">
-    {% csrf_token %}
-    <input type="checkbox" name="add_serial" value="yes"> Add Serial No Column
-    <button type="submit">Apply Changes</button>
-</form>
-
-
-
-
-
-
-<!-- Filter Column Form -->
-<form method="POST">
-    {% csrf_token %}
-    <label for="filter_column">Filter Column:</label>
-    <select name="filter_column">
-        {% for col in columns %}
-        <option value="{{ col }}">{{ col }}</option>
-        {% endfor %}
-    </select>
-
-    <label for="filter_condition">Condition:</label>
-    <select name="filter_condition">
-        <option value="=">=</option>
-        <option value=">">&gt;</option>
-        <option value="<">&lt;</option>
-        <option value=">=">&ge;</option>
-        <option value="<=">&le;</option>
-    </select>
-
-    <label for="filter_value">Value:</label>
-    <input type="text" name="filter_value">
-
-    <button type="submit" name="action" value="filter">Apply Filter</button>
-
-
-    <h3>Arithmetic Filtering</h3>
-    <label for="filter_col1">Column 1:</label>
-    <select name="filter_col1">
-        {% for col in columns %}
-        <option value="{{ col }}">{{ col }}</option>
-        {% endfor %}
-    </select>
-
-    <label for="filter_op">Operation:</label>
-    <select name="filter_op">
-        <option value="add">+</option>
-        <option value="subtract">-</option>
-        <option value="multiply">*</option>
-        <option value="divide">/</option>
-    </select>
-
-    <label for="filter_col2">Column 2:</label>
-    <select name="filter_col2">
-        <option >None</option>
-
-        {% for col in columns %}
-        <option value="{{ col }}">{{ col }}</option>
-        {% endfor %}
-    </select>
-
-    <label for="filter_condition">Condition:</label>
-    <select name="filter_condition">
-
-        <option value="=">=</option>
-        <option value=">">&gt;</option>
-        <option value="<">&lt;</option>
-        <option value=">=">&ge;</option>
-        <option value="<=">&le;</option>
-    </select>
-
-    <label for="filter_value">Value:</label>
-    <input type="text" name="filter_value">
-
-    <button type="submit" name="action" value="arithmetic_filter">Apply Arithmetic Filter</button>
-
-   <h3>Text Filtering</h3>
-    <label for="column_name">Column:</label>
-    <select name="column_name">
-        {% for col in columns %}
-        <option value="{{ col }}">{{ col }}</option>
-        {% endfor %}
-    </select>
-    
-    <label for="search_query">Search:</label>
-    <input type="text" name="search_query" placeholder="Enter text to search">
-    
-    <button type="submit" name="action" value="text_filter">Apply Text Filter</button>
-
-</form>
-
-
-
-
-
-
-
-
-
-
-
-
-
-<div class="center-container">
-<h3>Add a New Column (Perform Calculation)</h3>
-  </div>
-
-<form method="POST" action="{% url 'display_csv' %}">
-    {% csrf_token %}
-    
-    <label for="new_column_name">New Column Name:</label>
-    <input type="text" name="new_column_name" id="new_column_name" required>
-
-    <label for="column_1">Select First Column:</label>
-    <select name="column_1" id="column_1">
-        {% for column in columns %}
-            <option value="{{ column }}">{{ column }}</option>
-        {% endfor %}
-    </select>
-
-    <label for="operation">Operation:</label>
-    <select name="operation" id="operation">
-        <option value="add">+</option>
-        <option value="subtract">-</option>
-        <option value="multiply">*</option>
-        <option value="divide">/</option>
-    </select>
-
-    <label for="column_2">Select Second Column:</label>
-    <select name="column_2" id="column_2">
-        {% for column in columns %}
-            <option value="{{ column }}">{{ column }}</option>
-        {% endfor %}
-    </select>
-
-    <button type="submit" name="action" value="add_column">Add Column</button>
-</form>
-
-
-
-
-
-
-
-
-<!-- Save to Database -->
-<form method="POST" action="{% url 'save_in_database' %}">
-    {% csrf_token %}
-    <label for="table_name">Table Name:</label>
-    <input type="text" id="table_name" name="table_name" required>
-
-    <label for="primary_key">Primary Key (select column):</label>
-    <select id="primary_key" name="primary_key">
-        {% for column in columns %}
-        <option value="{{ column }}">{{ column }}</option>
-        {% endfor %}
-    </select>
-
-    <button type="submit">Save in Database</button>
-</form>
-
-<!-- Download CSV -->
-<form action="{% url 'download_csv' %}" method="GET">
-    <button type="submit">Download Cleaned Data as CSV</button>
-</form>
-
-<hr>
-
-<!-- Analysis & Advanced Preprocessing -->
-<form method="GET" action="{% url 'analysis' %}">
-    <button type="submit">Start Analysis</button>
-</form>
-
-<form method="POST" action="{% url 'advanced_preprocessing' %}">
-    {% csrf_token %}
-    <button type="submit">Go to Advanced Preprocessing</button>
-</form>
-
-<!-- Display CSV Data -->
-<table>
-    <thead>
-        <tr>
-            {% if data_entries %}
-                {% for column in columns %}
-                    <th>{{ column }}</th>
-                {% endfor %}
-            {% endif %}
-        </tr>
-    </thead>
-    <tbody>
-        {% for entry in data_entries %}
-            <tr>
-                {% for value in entry.values %}
-                    <td>{{ value }}</td>
-                {% endfor %}
-            </tr>
-        {% endfor %}
-    </tbody>
-</table>
-
-{% endblock %} {% endcomment %}

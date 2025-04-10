@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 from pathlib import Path
 import os
+import dj_database_url  # Ensure you have installed this package
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
@@ -81,22 +83,43 @@ LOGIN_REDIRECT_URL = '/'  # Redirect after successful login
 
 
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': 'django_data_analysis',
+#         'USER': 'rootuser',
+#         'PASSWORD': 'Gangayamuna@123',
+#         'HOST': '127.0.0.1',  # or 'localhost'
+# #        'HOST': 'localhost',
+#         'PORT': '3307',  # Make sure this matches your MariaDB port
+#         'OPTIONS': {
+#             'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+#         },
+#     }
+# }
+
+
+
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'django_data_analysis',
-        'USER': 'rootuser',
-        'PASSWORD': 'Gangayamuna@123',
-        'HOST': '127.0.0.1',  # or 'localhost'
-#        'HOST': 'localhost',
-        'PORT': '3307',  # Make sure this matches your MariaDB port
-        'OPTIONS': {
-            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
-        },
+        'NAME': 'bzj0q4hvrkhixozxayxl',  # Matches MYSQL_ADDON_DB
+        'USER': 'ufcwfewaajjk4arb',      # Matches MYSQL_ADDON_USER
+        'PASSWORD': 'fET5IwXoQvb4NwWHGiuB',  # Matches MYSQL_ADDON_PASSWORD
+        'HOST': 'bzj0q4hvrkhixozxayxl-mysql.services.clever-cloud.com',  # Matches MYSQL_ADDON_HOST
+        'PORT': '3306',  # Matches MYSQL_ADDON_PORT
     }
 }
 
 
+
+
+
+
+# DATABASES = {
+#     'default': dj_database_url.parse(os.getenv('DATABASE_URL', ''), conn_max_age=600)
+# }
 
 AUTH_PASSWORD_VALIDATORS = [
     {

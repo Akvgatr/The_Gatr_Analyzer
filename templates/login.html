@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
+    <title>Gatr_analyzer - Login</title>
     {% load static %}
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -19,6 +19,7 @@
             --text-muted: #b3b3b3;
             --border-color: rgba(255, 255, 255, 0.1);
             --shadow-color: rgba(0, 0, 0, 0.3);
+            --success-color: #10b981;
         }
 
         * {
@@ -95,6 +96,18 @@
             -webkit-text-fill-color: transparent;
         }
 
+        .site-title {
+            text-align: center;
+            font-size: 40px;
+            margin-bottom: 10px;
+            font-weight: 700;
+            color: var(--primary-light);
+            letter-spacing: 1px;
+            background: linear-gradient(135deg, var(--primary-light), var(--primary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
         h2 {
             text-align: center;
             font-size: 28px;
@@ -121,7 +134,8 @@
         .form-group i.input-icon {
             position: absolute;
             left: 15px;
-            top: 42px;
+            top: 70%;
+            transform: translateY(-50%);
             color: var(--text-muted);
             font-size: 18px;
         }
@@ -156,7 +170,7 @@
         .toggle-password {
             position: absolute;
             right: 15px;
-            top: 50%;
+            top: 70%;
             transform: translateY(-50%);
             cursor: pointer;
             color: var(--text-muted);
@@ -167,6 +181,17 @@
 
         .toggle-password:hover {
             color: var(--primary-light);
+        }
+
+        .success-message {
+            color: var(--success-color);
+            font-size: 14px;
+            text-align: center;
+            margin-bottom: 20px;
+            padding: 10px;
+            background: rgba(16, 185, 129, 0.1);
+            border-radius: 6px;
+            border-left: 3px solid var(--success-color);
         }
 
         .btn {
@@ -224,17 +249,6 @@
         .link-container a:hover {
             color: var(--primary-color);
             text-decoration: underline;
-        }
-
-        .error-message {
-            color: #e53e3e;
-            font-size: 14px;
-            text-align: center;
-            margin-bottom: 20px;
-            padding: 10px;
-            background: rgba(229, 62, 62, 0.1);
-            border-radius: 6px;
-            border-left: 3px solid #e53e3e;
         }
 
         /* Right-side image section */
@@ -398,13 +412,16 @@
                 <div class="logo">
                     <i class="fas fa-chart-line"></i>
                 </div>
+                <h1 class="site-title">Gatr_analyzer</h1>
                 <h2>Welcome Back</h2>
 
                 {% if messages %}
                     {% for message in messages %}
-                        <p class="error-message">
-                            <i class="fas fa-exclamation-circle"></i> {{ message }}
-                        </p>
+                        {% if message.tags == 'success' %}
+                            <p class="success-message">
+                                <i class="fas fa-check-circle"></i> {{ message }}
+                            </p>
+                        {% endif %}
                     {% endfor %}
                 {% endif %}
 
@@ -494,27 +511,3 @@
     </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

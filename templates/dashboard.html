@@ -260,7 +260,34 @@
 </head>
 <body>
 
-    <h2><i class="fas fa-chart-line"></i> Interactive Data Dashboard</h2>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    {% comment %} <h2><i class="fas fa-chart-line"></i> Interactive Data Dashboard</h2>
 
     <form method="POST">
         {% csrf_token %}
@@ -343,7 +370,187 @@
                 </div>
             {% endfor %}
         </div>
+    </div> {% endcomment %}
+
+
+
+<body>
+    <h2><i class="fas fa-chart-line"></i> Interactive Data Dashboard</h2>
+
+    <form method="POST">
+        {% csrf_token %}
+        
+        <div class="form-row">
+            <div class="form-group">
+                <label><i class="fas fa-arrows-alt-h"></i> X-Axis Column:</label>
+                <select name="x_axis">
+                    <option value="">-- None --</option>
+                    {% for column in columns %}
+                        <option value="{{ column }}">{{ column }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label><i class="fas fa-arrows-alt-v"></i> Y-Axis Columns:</label>
+                <select name="y_axis" multiple>
+                    {% for column in columns %}
+                        <option value="{{ column }}">{{ column }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label><i class="fas fa-chart-pie"></i> Select Graph:</label>
+                <select name="graph_type">
+                    <option value="Bar Graph">Bar Graph</option>
+                    <option value="Histogram">Histogram</option>
+                    <option value="Line Chart">Line Chart</option>
+                    <option value="Scatter Plot">Scatter Plot</option>
+                    <option value="Pie Chart">Pie Chart</option>
+                    <option value="Box Plot">Box Plot</option>
+                    <option value="Area Chart">Area Chart</option>
+                    <option value="Heatmap">Heatmap</option>
+                    <option value="Bubble Chart">Bubble Chart</option>
+                    <option value="Funnel Chart">Funnel Chart</option>
+                    <option value="Violin Plot">Violin Plot</option>
+                    <option value="Density Contour">Density Contour</option>
+                    <option value="Parallel Coordinates Plot">Parallel Coordinates Plot</option>
+                    <option value="Sunburst Chart">Sunburst Chart</option>
+                    <option value="Map Plot">Map Plot</option>
+                </select>
+            </div>
+        </div>
+        
+        <div class="form-row">
+            <div class="form-group">
+                <label for="start_index"><i class="fas fa-step-forward"></i> Start Row Index:</label>
+                <input type="number" name="start_index" id="start_index" min="0" placeholder="Default: 0">
+            </div>
+            
+            <div class="form-group">
+                <label for="end_index"><i class="fas fa-step-backward fa-flip-horizontal"></i> End Row Index:</label>
+                <input type="number" name="end_index" id="end_index" min="0" placeholder="Default: All rows">
+            </div>
+        </div>
+        
+        <div class="form-row filter-container">
+            <h3><i class="fas fa-filter"></i> Filters</h3>
+            <div class="filter-row" id="filter-row-1">
+                <div class="form-group">
+                    <label>Filter Column:</label>
+                    <select name="filter_column[]" onchange="updateFilterValueField(this)">
+                        <option value="">-- Select Column --</option>
+                        {% for column in columns %}
+                            <option value="{{ column }}">{{ column }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label>Operator:</label>
+                    <select name="filter_operator[]">
+                        <option value="=">=</option>
+                        <option value="!=">!=</option>
+                        <option value=">">></option>
+                        <option value="<"><</option>
+                        <option value=">=">>=</option>
+                        <option value="<="><=</option>
+                        <option value="contains">Contains</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label>Filter Value:</label>
+                    <input type="text" name="filter_value[]" placeholder="Enter value...">
+                </div>
+            </div>
+            
+            <button type="button" class="add-filter-btn" onclick="addFilterRow()">
+                <i class="fas fa-plus"></i> Add Another Filter
+            </button>
+        </div>
+
+        <div class="btn-container">
+            <button type="submit"><i class="fas fa-plus-circle"></i> Add Graph</button>
+            <button type="button" onclick="downloadDashboard()"><i class="fas fa-download"></i> Download Dashboard</button>
+        </div>
+    </form>
+
+    <div class="dashboard-container">
+        <div class="grid-stack">
+            {% for graph_html in graph_htmls %}
+                <div class="grid-stack-item" gs-w="4" gs-h="3" data-index="{{ forloop.counter0 }}">
+                    <div class="grid-stack-item-content">
+                        {{ graph_html|safe }}
+                        <button class="delete-btn" onclick="deleteGraph({{ forloop.counter0 }})"><i class="fas fa-trash"></i></button>
+                    </div>
+                </div>
+            {% empty %}
+                <div class="empty-state">
+                    <i class="fas fa-chart-area fa-3x"></i>
+                    <p>No graphs added yet. Use the form above to create your first visualization.</p>
+                </div>
+            {% endfor %}
+        </div>
     </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -466,6 +673,64 @@
                 link.click();
             }, 800);
         }
+
+
+
+        function addFilterRow() {
+        const filtersContainer = document.querySelector('.filter-container');
+        const newRow = document.createElement('div');
+        newRow.className = 'filter-row';
+        
+        const rowCount = document.querySelectorAll('.filter-row').length + 1;
+        
+        newRow.innerHTML = `
+            <div class="form-group">
+                <label>Filter Column:</label>
+                <select name="filter_column[]" onchange="updateFilterValueField(this)">
+                    <option value="">-- Select Column --</option>
+                    {% for column in columns %}
+                        <option value="{{ column }}">{{ column }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label>Operator:</label>
+                <select name="filter_operator[]">
+                    <option value="=">=</option>
+                    <option value="!=">!=</option>
+                    <option value=">">></option>
+                    <option value="<"><</option>
+                    <option value=">=">>=</option>
+                    <option value="<="><=</option>
+                    <option value="contains">Contains</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label>Filter Value:</label>
+                <input type="text" name="filter_value[]" placeholder="Enter value...">
+            </div>
+            
+            <button type="button" class="remove-filter-btn" onclick="removeFilterRow(this)">
+                <i class="fas fa-minus"></i>
+            </button>
+        `;
+        
+        // Insert before the "Add Another Filter" button
+        filtersContainer.insertBefore(newRow, document.querySelector('.add-filter-btn'));
+    }
+    
+    function removeFilterRow(button) {
+        const row = button.parentElement;
+        row.parentElement.removeChild(row);
+    }
+    
+    function updateFilterValueField(select) {
+        // This function can be expanded to populate value fields with options
+        // based on the selected column (e.g., show dropdown for categorical columns)
+        // For now, it's a placeholder for future enhancement
+    }
     </script>
 
 </body>
@@ -473,224 +738,3 @@
 {% endblock %}
 
 
-
-{% comment %} {% extends "base.html" %}
-
-{% block content %}
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Interactive Dashboard</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/gridstack.js/8.0.0/gridstack.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gridstack.js/8.0.0/gridstack-all.min.js"></script>
-    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
-    <style>
-        body {
-            background-color: #0D0907;
-            color: white;
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-        }
-
-        h2 {
-            text-align: center;
-            font-size: 2rem;
-            margin-bottom: 20px;
-            color: #f8f8f8;
-        }
-
-        .dashboard-container {
-            width: 90%;
-            margin: auto;
-            padding: 20px;
-        }
-
-        .grid-stack {
-            margin-top: 20px;
-        }
-
-        .grid-stack-item-content {
-            background: #222;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
-            color: #ddd;
-        }
-
-        select, input, button {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 15px;
-            border: 1px solid #666;
-            border-radius: 5px;
-            background: #333;
-            color: white;
-            font-size: 16px;
-        }
-
-        select[multiple] {
-            height: 150px;
-        }
-
-        button {
-            background-color: #4c4eaf;
-            color: white;
-            border: none;
-            cursor: pointer;
-            transition: 0.3s;
-            font-weight: bold;
-        }
-
-        button:hover {
-            background-color: #373b93;
-        }
-
-.delete-btn {
-    position: absolute;
-    top: 5px;
-    right: 5px;
-    background: red;
-    color: white;
-    border: none;
-    cursor: pointer;
-    padding: 2px 6px; /* Reduced padding */
-    border-radius: 3px; /* Smaller border radius */
-    font-size: 12px; /* Smaller font size */
-}
-
-
-        .delete-btn:hover {
-            background: #cc0000;
-        }
-
-        form {
-            width: 80%;
-            max-width: 800px;
-            margin: 20px auto;
-            background: #222;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
-        }
-
-        label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: bold;
-            color: #ddd;
-        }
-    </style>
-</head>
-<body>
-
-    <h2>Interactive Data Dashboard</h2>
-
-    <form method="POST">
-        {% csrf_token %}
-        
-        <label>Select Columns:</label>
-        <select name="columns" multiple>
-            {% for column in columns %}
-                <option value="{{ column }}">{{ column }}</option>
-            {% endfor %}
-        </select>
-        <label for="start_index">Start Row Index:</label>
-        <input type="number" name="start_index" id="start_index" min="0">
-
-        <label for="end_index">End Row Index:</label>
-        <input type="number" name="end_index" id="end_index" min="0">
-
-        <label for="min_value">Min Value:</label>
-        <input type="number" name="min_value" step="any">
-
-        <label for="max_value">Max Value:</label>
-        <input type="number" name="max_value" step="any">
-
-
-        <label>Select Graph:</label>
-        <select name="graph_type">
-            <option value="Bar Graph">Bar Graph</option>
-            <option value="Histogram">Histogram</option>
-            <option value="Line Chart">Line Chart</option>
-            <option value="Scatter Plot">Scatter Plot</option>
-            <option value="Pie Chart">Pie Chart</option>
-            <option value="Box Plot">Box Plot</option>
-            <option value="Area Chart">Area Chart</option>
-            <option value="Heatmap">Heatmap</option>
-            <option value="Bubble Chart">Bubble Chart</option>
-            <option value="Funnel Chart">Funnel Chart</option>
-            <option value="Violin Plot">Violin Plot</option>
-            <option value="Density Contour">Density Contour</option>
-            <option value="Parallel Coordinates Plot">Parallel Coordinates Plot</option>
-            <option value="Sunburst Chart">Sunburst Chart</option>
-            <option value="Map Plot">Map Plot</option>
-        </select>
-
-        <button type="submit">Add Graph</button>
-        <button type="button" onclick="downloadDashboard()">Download Dashboard</button>
-    </form>
-
-    <div class="dashboard-container">
-        <div class="grid-stack">
-            {% for graph_html in graph_htmls %}
-                <div class="grid-stack-item" gs-w="4" gs-h="3" data-index="{{ forloop.counter0 }}">
-                    <div class="grid-stack-item-content">
-                        {{ graph_html|safe }}
-                        <button class="delete-btn" onclick="deleteGraph({{ forloop.counter0 }})">X</button>
-                    </div>
-                </div>
-            {% endfor %}
-        </div>
-    </div>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            let grid = GridStack.init();
-        });
-
-        function deleteGraph(index) {
-            fetch("", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/x-www-form-urlencoded",
-                    "X-CSRFToken": "{{ csrf_token }}"
-                },
-                body: `delete_index=${index}`
-            }).then(response => {
-                if (response.ok) location.reload();
-                else alert("Failed to delete graph.");
-            });
-        }
-
-function downloadDashboard() {
-    // Get the dashboard's HTML content
-    let dashboardContent = document.querySelector(".dashboard-container").outerHTML;
-
-    // Create a complete HTML document
-    let completeHTML = `<!DOCTYPE html>
-    <html>
-    <head>
-        <title>Dashboard</title>
-        <style>
-            body { font-family: Arial, sans-serif; }
-            .dashboard-container { padding: 20px; border: 1px solid #ccc; }
-        </style>
-    </head>
-    <body>
-        ${dashboardContent}
-    </body>
-    </html>`;
-
-    // Create a Blob and trigger download
-    let blob = new Blob([completeHTML], { type: "text/html" });
-    let link = document.createElement("a");
-    link.href = URL.createObjectURL(blob);
-    link.download = "dashboard.html";
-    link.click();
-}
-    </script>
-
-</body>
-</html>
-{% endblock %} {% endcomment %}

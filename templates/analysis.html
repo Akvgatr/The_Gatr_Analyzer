@@ -465,7 +465,7 @@
     <h1><i class="fas fa-analytics"></i> Data Analysis</h1>
 
     <!-- Analysis Form -->
-    <div class="card">
+    {% comment %} <div class="card">
         <form method="POST" action="{% url 'analysis' %}">
             {% csrf_token %}
             
@@ -506,6 +506,7 @@
                         <option value="String Length">String Length</option>
                         <option value="Concatenation">Concatenation</option>
                         <option value="Frequency Count">Frequency Count</option>
+
                     </select>
                 </div>
             </div>
@@ -539,7 +540,133 @@
 
             <button type="submit"><i class="fas fa-play-circle"></i> Start Analysis</button>
         </form>
-    </div>
+    </div> {% endcomment %}
+
+
+
+
+<div class="card">
+    <form method="POST" action="{% url 'analysis' %}">
+        {% csrf_token %}
+        
+        <div class="form-section">
+            <div class="form-section-title"><i class="fas fa-table"></i> Data Selection</div>
+            <div class="form-group">
+                <label for="columns"><i class="fas fa-columns"></i> Select Columns
+                    <span class="tooltip"><i class="fas fa-info-circle"></i>
+                        <span class="tooltiptext">Choose one or more columns to analyze</span>
+                    </span>
+                </label>
+                <select name="columns" id="columns" multiple>
+                    {% for column in columns %}
+                        <option value="{{ column }}">{{ column }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="operation"><i class="fas fa-calculator"></i> Select Operation
+                    <span class="tooltip"><i class="fas fa-info-circle"></i>
+                        <span class="tooltiptext">Choose the statistical operation to perform</span>
+                    </span>
+                </label>
+                <select name="operation" id="operation">
+                    <option value="None">None</option>
+                    <option value="Max">Max</option>
+                    <option value="Min">Min</option>
+                    <option value="Average">Average</option>
+                    <option value="Median">Median</option>
+                    <option value="Mode">Mode</option>
+                    <option value="Sum">Sum</option>
+                    <option value="Standard Deviation">Standard Deviation</option>
+                    <option value="Variance">Variance</option>
+                    <option value="Count Unique">Count Unique</option>
+                    <option value="Most Frequent">Most Frequent</option>
+                    <option value="Count Nulls">Count Nulls</option>
+                    <option value="String Length">String Length</option>
+                    <option value="Concatenation">Concatenation</option>
+                    <option value="Frequency Count">Frequency Count</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="form-section">
+            <div class="form-section-title"><i class="fas fa-filter"></i> Data Filtering</div>
+            <div class="form-group">
+                <label><i class="fas fa-list-ol"></i> Row Index Range</label>
+                <div class="input-group">
+                    <div class="form-group">
+                        <input type="number" name="min_row" placeholder="Min Row (e.g., 10)" value="{{ min_row }}">
+                    </div>
+                    <div class="form-group">
+                        <input type="number" name="max_row" placeholder="Max Row (e.g., 50)" value="{{ max_row }}">
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label><i class="fas fa-sort-amount-down-alt"></i> Min-Max Value Range (Optional)</label>
+                <div class="input-group">
+                    <div class="form-group">
+                        <input type="number" name="value_min" placeholder="Min Value" value="{{ value_min }}">
+                    </div>
+                    <div class="form-group">
+                        <input type="number" name="value_max" placeholder="Max Value" value="{{ value_max }}">
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-group filter-container">
+                <div class="form-section-title"><i class="fas fa-filter"></i> Advanced Filtering</div>
+                <div class="filter-row" id="filter-row-1">
+                    <div class="form-group">
+                        <label><i class="fas fa-table"></i> Filter Column:</label>
+                        <select name="filter_column[]" onchange="updateFilterValueField(this)">
+                            <option value="">-- Select Column --</option>
+                            {% for column in columns %}
+                                <option value="{{ column }}">{{ column }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label><i class="fas fa-equals"></i> Operator:</label>
+                        <select name="filter_operator[]">
+                            <option value="=">=</option>
+                            <option value="!=">!=</option>
+                            <option value=">">></option>
+                            <option value="<"><</option>
+                            <option value=">=">>=</option>
+                            <option value="<="><=</option>
+                            <option value="contains">Contains</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label><i class="fas fa-keyboard"></i> Filter Value:</label>
+                        <input type="text" name="filter_value[]" placeholder="Enter value...">
+                    </div>
+                </div>
+                
+                <div class="filter-controls">
+                    <button type="button" class="add-filter-btn" onclick="addFilterRow()">
+                        <i class="fas fa-plus"></i> Add Another Filter
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <button type="submit"><i class="fas fa-play-circle"></i> Start Analysis</button>
+    </form>
+</div>
+
+
+
+
+
+
+
+
 
     <!-- Analysis Results -->
     {% if result %}
@@ -578,6 +705,21 @@
         <p><i class="fas fa-info-circle"></i> No results to display. Please select columns and an operation.</p>
     {% endif %}
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     <!-- Row Data -->
     {% if row_data %}
         <div class="card">
@@ -605,6 +747,22 @@
         </div>
     {% endif %}
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     <!-- Navigation Buttons -->
     <div class="nav-container">
         <form method="POST" action="{% url 'predictive_analysis' %}" style="display: inline; margin: 0;">
@@ -613,6 +771,20 @@
         </form>
         <a href="{% url 'graphs' %}" class="nav-button"><i class="fas fa-chart-line"></i> Go to Graphs</a>
     </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     <!-- SQL Query Section -->
     <div class="card">
@@ -697,282 +869,83 @@
             });
         });
     });
+
+
+
+
+
+
+
+
+
+function addFilterRow() {
+    const filtersContainer = document.querySelector('.filter-container');
+    const newRow = document.createElement('div');
+    newRow.className = 'filter-row';
+    
+    newRow.innerHTML = `
+        <div class="form-group">
+            <label><i class="fas fa-table"></i> Filter Column:</label>
+            <select name="filter_column[]" onchange="updateFilterValueField(this)">
+                <option value="">-- Select Column --</option>
+                {% for column in columns %}
+                    <option value="{{ column }}">{{ column }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label><i class="fas fa-equals"></i> Operator:</label>
+            <select name="filter_operator[]">
+                <option value="=">=</option>
+                <option value="!=">!=</option>
+                <option value=">">></option>
+                <option value="<"><</option>
+                <option value=">=">>=</option>
+                <option value="<="><=</option>
+                <option value="contains">Contains</option>
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label><i class="fas fa-keyboard"></i> Filter Value:</label>
+            <input type="text" name="filter_value[]" placeholder="Enter value...">
+        </div>
+        
+        <button type="button" class="remove-filter-btn" onclick="removeFilterRow(this)">
+            <i class="fas fa-minus"></i>
+        </button>
+    `;
+    
+    // Insert before the filter controls
+    filtersContainer.insertBefore(newRow, document.querySelector('.filter-controls'));
+}
+
+function removeFilterRow(button) {
+    const row = button.parentElement;
+    row.parentElement.removeChild(row);
+}
+
+function updateFilterValueField(select) {
+    // This function can be expanded to populate value fields with options
+    // based on the selected column (e.g., show dropdown for categorical columns)
+    // Currently, it's a placeholder for future enhancements
+}
+
+
+
+
+
+
+
+
+
+
+
+
 </script>
 {% endblock %}
 
 
 
 
-
-
-{% comment %} {% extends "base.html" %}
-{% load custom_filter %}
-
-{% block content %}
-<style>
-    body {
-        background-color: #0D0907;
-        color: white;
-        font-family: Arial, sans-serif;
-        margin: 0;
-        padding: 0;
-    }
-
-    h1, h2 {
-        text-align: center;
-        font-size: 2rem;
-        margin-bottom: 20px;
-        color: #f8f8f8;
-    }
-
-    form {
-        width: 80%;
-        max-width: 800px;
-        margin: 20px auto;
-        background: #222;
-        padding: 20px;
-        border-radius: 10px;
-        box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
-    }
-
-    label {
-        display: block;
-        margin-bottom: 8px;
-        font-weight: bold;
-        color: #ddd;
-    }
-
-    select, input, textarea, button {
-        width: 100%;
-        padding: 10px;
-        margin-bottom: 15px;
-        border: 1px solid #666;
-        border-radius: 5px;
-        background: #333;
-        color: white;
-        font-size: 16px;
-    }
-
-    select[multiple] {
-        height: 150px;
-    }
-
-    button {
-        background-color: #4c4eaf;
-        color: white;
-        border: none;
-        cursor: pointer;
-        transition: 0.3s;
-        font-weight: bold;
-    }
-
-    button:hover {
-        background-color: #373b93;
-    }
-
-    table {
-        width: 90%;
-        margin: 30px auto;
-        border-collapse: collapse;
-        box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
-    }
-
-    th, td {
-        padding: 12px;
-        text-align: left;
-        border-bottom: 1px solid #444;
-    }
-
-    th {
-        background-color: #4c4eaf;
-        color: white;
-        font-weight: bold;
-    }
-
-    tr:nth-child(even) {
-        background-color: #1a1a1a;
-    }
-
-    tr:nth-child(odd) {
-        background-color: #222;
-    }
-
-    hr {
-        border: 0;
-        height: 2px;
-        background: #666;
-        margin: 30px auto;
-        width: 80%;
-    }
-
-    .error {
-        color: red;
-        font-weight: bold;
-    }
-</style>
-
-<h1>Data Analysis</h1>
-
-<!-- Analysis Form -->
-<form method="POST" action="{% url 'analysis' %}">
-    {% csrf_token %}
-    
-    <label for="columns">Select Columns:</label>
-    <select name="columns" id="columns" multiple>
-        {% for column in columns %}
-            <option value="{{ column }}">{{ column }}</option>
-        {% endfor %}
-    </select>
-
-    <label for="operation">Select Operation:</label>
-    <select name="operation" id="operation">
-        <option value="None">None</option>
-        <option value="Max">Max</option>
-        <option value="Min">Min</option>
-        <option value="Average">Average</option>
-        <option value="Median">Median</option>
-        <option value="Mode">Mode</option>
-        <option value="Sum">Sum</option>
-        <option value="Standard Deviation">Standard Deviation</option>
-        <option value="Variance">Variance</option>
-        <option value="Count Unique">Count Unique</option>
-        <option value="Most Frequent">Most Frequent</option>
-        <option value="Count Nulls">Count Nulls</option>
-        <option value="String Length">String Length</option>
-        <option value="Concatenation">Concatenation</option>
-        <option value="Frequency Count">Frequency Count</option>
-    </select>
-    <label>Row Index Range:</label>
-    <input type="number" name="min_row" placeholder="Min Row (e.g., 10)">
-    <input type="number" name="max_row" placeholder="Max Row (e.g., 50)">
-
-    <label>Min-Max Value Range (Optional):</label>
-    <input type="number" name="value_min" placeholder="Min Value">
-    <input type="number" name="value_max" placeholder="Max Value">
-
-
-
-    <button type="submit">Start Analysis</button>
-</form>
-
-
-
-
-<!-- Analysis Results -->
-{% if result %}
-    <h2>Analysis Result:</h2>
-    <table>
-        <thead>
-            <tr>
-                <th>Column</th>
-                <th>Result</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for col, val in result.items %}
-                <tr>
-                    <td>{{ col }}</td>
-                    <td>
-                        {% if val is iterable and not val|stringformat:"s" %}
-                            <ul>
-                                {% for sub_val in val %}
-                                    <li>{{ sub_val }}</li>
-                                {% endfor %}
-                            </ul>
-                        {% else %}
-                            {{ val }}
-                        {% endif %}
-                    </td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-{% else %}
-    <p>No results to display. Please select columns and an operation.</p>
-{% endif %}
-
-{% if row_data %}
-    <h2>Row Data:</h2>
-    <table>
-        <thead>
-            <tr>
-                {% for key in row_data.0.keys %}
-                    <th>{{ key }}</th>
-                {% endfor %}
-            </tr>
-        </thead>
-        <tbody>
-            {% for row in row_data %}
-                <tr>
-                    {% for value in row.values %}
-                        <td>{{ value }}</td>
-                    {% endfor %}
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-{% else %}
-    <p>No row data available.</p>
-{% endif %}
-
-<!-- Predictive Analysis Button -->
-<form method="POST" action="{% url 'predictive_analysis' %}">
-    {% csrf_token %}
-    <button type="submit">Go to Predictive Analysis</button>
-</form>
-
-<!-- Graphs Link -->
-<a href="{% url 'graphs' %}">Go to Graphs</a>
-
-<!-- SQL Query Section -->
-<h2>SQL Query:</h2>
-
-<form method="POST" action="{% url 'sql_analysis' %}">
-    {% csrf_token %}
-    
-    <label for="tables">Select Table:</label>
-    <select name="table_name">
-        {% for table in tables %}
-            <option value="{{ table }}" {% if table == table_name %}selected{% endif %}>{{ table }}</option>
-        {% endfor %}
-    </select>
-
-    <label for="password">Enter Password:</label>
-    <input type="password" id="password" name="password" value="{{ password }}">
-
-    <label for="sql_query">Enter SQL Query:</label>
-    <textarea id="sql_query" name="sql_query" rows="5">{{ sql_query }}</textarea>
-
-    <button type="submit">Execute SQL Query</button>
-</form>
-
-<!-- SQL Query Results -->
-{% if sql_result %}
-    <h2>Query Results:</h2>
-    <table>
-        <thead>
-            <tr>
-                {% for column in columns %}
-                    <th>{{ column }}</th>
-                {% endfor %}
-            </tr>
-        </thead>
-        <tbody>
-            {% for row in sql_result %}
-                <tr>
-                    {% for column in columns %}
-                        <td>{{ row|get_item:column }}</td>
-                    {% endfor %}
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-{% endif %}
-
-<!-- SQL Error Display -->
-{% if sql_error %}
-    <h2 class="error">SQL Error:</h2>
-    <p class="error">{{ sql_error }}</p>
-{% endif %}
-
-{% endblock %} {% endcomment %}

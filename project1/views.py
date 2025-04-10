@@ -133,234 +133,6 @@ def csv_to_dataframe(csv_data):
     from io import StringIO
     return pd.read_csv(StringIO(csv_data))
 
-# def analysis(request):
-#     if not request.session.get("is_logged_in"):
-#         messages.info(request, "You need to log in first.")
-#         return redirect("login")
-
-#     if request.method == "POST":
-#         csv_data = request.session.get(SESSION_CSV_DATA)
-#         if not csv_data:
-#             return HttpResponse("Error: CSV data missing. Please re-upload the file.")
-
-#         df = csv_to_dataframe(csv_data)
-#         print("Available columns:", df.columns.tolist())
-
-#         selected_columns = request.POST.getlist('columns')
-#         operation = request.POST.get('operation')
-
-#         missing_columns = [col for col in selected_columns if col not in df.columns]
-#         if missing_columns:
-#             return HttpResponse(f"Error: Columns {missing_columns} not found in the data.")
-
-#         result = {}
-#         row_data = []
-
-#         numeric_data = df[selected_columns].apply(pd.to_numeric, errors='coerce')
-#         is_numeric = numeric_data.notna().any()
-
-#         if operation in ['Max', 'Min', 'Average', 'Median', 'Sum', 'Standard Deviation', 'Variance']:
-#             if is_numeric.any():
-#                 if operation == 'Max':
-#                     result = numeric_data.max().to_dict()
-#                     row_indices = {col: df[df[col] == result[col]].index.tolist() for col in selected_columns}
-#                 elif operation == 'Min':
-#                     result = numeric_data.min().to_dict()
-#                     row_indices = {col: df[df[col] == result[col]].index.tolist() for col in selected_columns}
-#                 elif operation == 'Average':
-#                     result = numeric_data.mean().to_dict()
-#                     row_indices = {}
-#                 elif operation == 'Median':
-#                     result = numeric_data.median().to_dict()
-#                     row_indices = {}
-#                 elif operation == 'Sum':
-#                     result = numeric_data.sum().to_dict()
-#                     row_indices = {}
-#                 elif operation == 'Standard Deviation':
-#                     result = numeric_data.std().to_dict()
-#                     row_indices = {}
-#                 elif operation == 'Variance':
-#                     result = numeric_data.var().to_dict()
-#                     row_indices = {}
-
-#                 # Fetch row data for max/min operations
-#                 if operation in ['Max', 'Min']:
-#                     for col, indices in row_indices.items():
-#                         for index in indices:
-#                             row_data.append(df.loc[index].to_dict())
-
-#         elif operation in ['Count Unique', 'Most Frequent', 'Count Nulls', 'String Length', 'Concatenation', 'Frequency Count']:
-#             for col in selected_columns:
-#                 if operation == 'Count Unique':
-#                     result[col] = df[col].nunique()
-#                 elif operation == 'Most Frequent':
-#                     result[col] = df[col].mode().iloc[0] if not df[col].mode().empty else None
-#                 elif operation == 'Count Nulls':
-#                     result[col] = df[col].isnull().sum()
-#                 elif operation == 'String Length':
-#                     result[col] = df[col].str.len().tolist() if df[col].dtype == 'object' else None
-#                 elif operation == 'Concatenation':
-#                     if len(selected_columns) > 1:
-#                         result[col] = df[selected_columns].astype(str).agg(' '.join, axis=1).tolist()
-#                 elif operation == 'Frequency Count':
-#                     result[col] = df[col].value_counts().to_dict()
-
-#         request.session[SESSION_CLEANED_DATA] = df.to_json()
-#         request.session.modified = True
-
-#         return render(request, 'analysis.html', {
-#             'result': result,
-#             'row_data': row_data,
-#             'columns': selected_columns,
-#             'username': request.session.get("username")
-#         })
-
-#     csv_data = request.session.get(SESSION_CSV_DATA)
-#     columns = csv_to_dataframe(csv_data).columns.tolist() if csv_data else []
-
-#     return render(request, 'analysis.html', {
-#         'columns': columns,
-#         'result': None,
-#         'row_data': None,
-#         'username': request.session.get("username")
-#     })
-
-
-
-
-
-
-
-
-
-
-
-
-
-# import plotly.express as px
-
-
-# SESSION_CLEANED_DATA = "cleaned_csv_data"
-
-# def generate_graph(request):
-#     if not request.session.get("is_logged_in"):
-#         return redirect("login")
-
-#     if request.method == "POST":
-#         selected_columns = request.POST.getlist('columns')
-#         graph_type = request.POST.get('graph_type')
-        
-#         top_entries = request.POST.get('top_entries', None)
-#         range_start = request.POST.get('range_start', None)
-#         range_end = request.POST.get('range_end', None)
-
-#         csv_data = request.session.get(SESSION_CLEANED_DATA)
-#         if not csv_data:
-#             return HttpResponse("No cleaned data found. Please upload and clean the data first.", status=400)
-
-#         df = pd.read_json(io.StringIO(csv_data))
-
-#         if not set(selected_columns).issubset(df.columns):
-#             return HttpResponse("Selected columns not found in data", status=400)
-
-#         try:
-#             if top_entries:
-#                 top_entries = int(top_entries)
-#                 df = df.head(top_entries)
-#             elif range_start and range_end:
-#                 range_start = int(range_start)
-#                 range_end = int(range_end)
-#                 df = df.iloc[range_start:range_end]
-#         except ValueError:
-#             return HttpResponse("Invalid numeric input for filtering range or top entries", status=400)
-
-#         x_column = selected_columns[0] if df[selected_columns[0]].dtype == 'object' else None
-#         y_columns = [col for col in selected_columns if col != x_column]
-
-#         try:
-#             fig = None
-#             if graph_type == "Bar Graph":
-#                 fig = px.bar(df, x=x_column, y=y_columns) if x_column else px.bar(df[y_columns])
-#             elif graph_type == "Histogram":
-#                 fig = px.histogram(df, x=y_columns[0])
-#             elif graph_type == "Line Chart":
-#                 fig = px.line(df, x=x_column, y=y_columns) if x_column else px.line(df[y_columns])
-#             elif graph_type == "Scatter Plot":
-#                 if len(y_columns) == 1 and x_column:
-#                     fig = px.scatter(df, x=x_column, y=y_columns[0])
-#                 elif len(y_columns) == 2:
-#                     fig = px.scatter(df, x=y_columns[0], y=y_columns[1])
-#                 else:
-#                     return HttpResponse("Scatter plot requires a categorical x-axis or exactly 2 numerical columns", status=400)
-#             elif graph_type == "Pie Chart":
-#                 if len(y_columns) == 1 and x_column:
-#                     fig = px.pie(df, names=x_column, values=y_columns[0])
-#                 else:
-#                     return HttpResponse("Pie chart requires one numerical column and one categorical column", status=400)
-#             elif graph_type == "Box Plot":
-#                 fig = px.box(df, y=y_columns)
-            
-#             # New Graph Types
-#             elif graph_type == "Area Chart":
-#                 fig = px.area(df, x=x_column, y=y_columns) if x_column else px.area(df[y_columns])
-#             elif graph_type == "Heatmap":
-#                 if len(selected_columns) == 2:
-#                     fig = px.density_heatmap(df, x=selected_columns[0], y=selected_columns[1])
-#                 else:
-#                     return HttpResponse("Heatmap requires exactly 2 selected columns", status=400)
-#             elif graph_type == "Violin Plot":
-#                 fig = px.violin(df, x=x_column, y=y_columns[0], box=True, points="all") if x_column else px.violin(df, y=y_columns[0])
-#             elif graph_type == "Sunburst Chart":
-#                 if len(selected_columns) >= 2:
-#                     fig = px.sunburst(df, path=selected_columns, values=y_columns[0])
-#                 else:
-#                     return HttpResponse("Sunburst requires at least 2 selected categorical columns", status=400)
-#             elif graph_type == "Density Contour":
-#                 if len(selected_columns) == 2:
-#                     fig = px.density_contour(df, x=selected_columns[0], y=selected_columns[1])
-#                 else:
-#                     return HttpResponse("Density contour requires exactly 2 numerical columns", status=400)
-#             elif graph_type == "Treemap":
-#                 if len(selected_columns) >= 2:
-#                     fig = px.treemap(df, path=selected_columns, values=y_columns[0])
-#                 else:
-#                     return HttpResponse("Treemap requires at least 2 selected categorical columns", status=400)
-#             elif graph_type == "Funnel Chart":
-#                 if len(selected_columns) >= 2:
-#                     fig = px.funnel(df, x=selected_columns[0], y=selected_columns[1])
-#                 else:
-#                     return HttpResponse("Funnel chart requires at least 2 selected columns", status=400)
-#             elif graph_type == "Radar Chart":
-#                 if len(selected_columns) >= 3:
-#                     fig = px.line_polar(df, r=selected_columns[1], theta=selected_columns[0], line_close=True)
-#                 else:
-#                     return HttpResponse("Radar chart requires at least 3 selected columns", status=400)
-#             else:
-#                 return HttpResponse("Invalid graph type selected", status=400)
-
-#             graph_html = fig.to_html(full_html=False)
-#             return render(request, 'graphs.html', {'graph_html': graph_html, 'columns': df.columns.tolist()})
-
-#         except Exception as e:
-#             return HttpResponse(f"Error generating graph: {str(e)}", status=500)
-    
-#     return HttpResponse("Invalid request method", status=400)
-
-
-# def graphs_view(request):
-#     if not request.session.get("is_logged_in"):
-#         return redirect("login")
-#     csv_data = request.session.get(SESSION_CLEANED_DATA)
-#     columns = []
-#     if csv_data:
-#         df = pd.read_json(io.StringIO(csv_data))
-#         columns = df.columns.tolist()
-#     return render(request, 'graphs.html', {'columns': columns})
-
-
-
-
-
 
 
 
@@ -385,6 +157,126 @@ SESSION_CSV_DATA = "csv_data"
 
 
 
+# def analysis(request):
+#     if not request.session.get("is_logged_in"):
+#         messages.info(request, "You need to log in first.")
+#         return redirect("login")
+
+#     if request.method == "POST":
+#         csv_data = request.session.get(SESSION_CSV_DATA)
+#         if not csv_data:
+#             return HttpResponse("Error: CSV data missing. Please re-upload the file.")
+
+
+#         df = pd.read_csv(io.StringIO(csv_data))
+#         selected_columns = request.POST.getlist('columns')
+#         operation = request.POST.get('operation')
+
+#         try:
+#             min_row = int(request.POST.get('min_row', 0))  # Default to 0
+#             max_row = int(request.POST.get('max_row', len(df) - 1))  # Default to last index
+#             df = df.iloc[min_row:max_row + 1]  # Select the range
+#         except ValueError:
+#             return HttpResponse("Error: Invalid row range values.")
+
+#         # Min-Max Value Filtering (optional)
+#         try:
+#             value_min = request.POST.get('value_min')
+#             value_max = request.POST.get('value_max')
+#             if value_min and value_max:
+#                 value_min, value_max = float(value_min), float(value_max)
+#                 for col in selected_columns:
+#                     if col in df.select_dtypes(include=['number']).columns:
+#                         df = df[(df[col] >= value_min) & (df[col] <= value_max)]
+#         except ValueError:
+#             return HttpResponse("Error: Invalid min/max value range.")
+
+
+
+#         missing_columns = [col for col in selected_columns if col not in df.columns]
+#         if missing_columns:
+#             return HttpResponse(f"Error: Columns {missing_columns} not found in the data.")
+
+#         result = {}
+#         row_data = []
+
+#         numeric_data = df[selected_columns].apply(pd.to_numeric, errors='coerce')
+#         is_numeric = numeric_data.notna().any()
+
+#         row_indices = {}
+        
+#         if operation in ['Max', 'Min', 'Average', 'Median', 'Sum', 'Standard Deviation', 'Variance']:
+#             if is_numeric.any():
+#                 if operation == 'Max':
+#                     result = numeric_data.max().to_dict()
+#                     row_indices = {col: df[df[col] == result[col]].index.tolist() for col in selected_columns}
+#                 elif operation == 'Min':
+#                     result = numeric_data.min().to_dict()
+#                     row_indices = {col: df[df[col] == result[col]].index.tolist() for col in selected_columns}
+#                 elif operation == 'Average':
+#                     result = numeric_data.mean().to_dict()
+#                 elif operation == 'Median':
+#                     result = numeric_data.median().to_dict()
+#                 elif operation == 'Sum':
+#                     result = numeric_data.sum().to_dict()
+#                 elif operation == 'Standard Deviation':
+#                     result = numeric_data.std().to_dict()
+#                 elif operation == 'Variance':
+#                     result = numeric_data.var().to_dict()
+
+#                 # Fetch row data for Max/Min operations
+#                 if operation in ['Max', 'Min']:
+#                     for col, indices in row_indices.items():
+#                         for index in indices:
+#                             row_data.append(df.loc[index].to_dict())
+
+#         elif operation in ['Count Unique', 'Most Frequent', 'Count Nulls', 'String Length', 'Concatenation', 'Frequency Count']:
+#             for col in selected_columns:
+#                 if operation == 'Count Unique':
+#                     result[col] = df[col].nunique()
+#                 elif operation == 'Most Frequent':
+#                     result[col] = df[col].mode().iloc[0] if not df[col].mode().empty else None
+#                 elif operation == 'Count Nulls':
+#                     result[col] = df[col].isnull().sum()
+#                 elif operation == 'String Length':
+#                     result[col] = df[col].str.len().tolist() if df[col].dtype == 'object' else None
+#                 elif operation == 'Concatenation':
+#                     result[col] = df[selected_columns].astype(str).agg(' '.join, axis=1).tolist()
+#                 elif operation == 'Frequency Count':
+#                     result[col] = df[col].value_counts().to_dict()
+
+#         return render(request, 'analysis.html', {
+#             'result': result,
+#             'row_data': row_data,
+#             'columns': df.columns.tolist(),
+#             'username': request.session.get("username"),
+#             'min_row': min_row,
+#             'max_row': max_row,
+#             'value_min': request.POST.get('value_min', ''),
+#             'value_max': request.POST.get('value_max', '')
+#         })
+
+#     csv_data = request.session.get(SESSION_CSV_DATA)
+#     columns = pd.read_csv(io.StringIO(csv_data)).columns.tolist() if csv_data else []
+    
+#     return render(request, 'analysis.html', {
+#         'columns': columns,
+#         'result': None,
+#         'row_data': None,
+#         'username': request.session.get("username"),
+#         'min_row': '',
+#         'max_row': '',
+#         'value_min': '',
+#         'value_max': ''
+#     })
+
+
+
+
+
+
+
+
 def analysis(request):
     if not request.session.get("is_logged_in"):
         messages.info(request, "You need to log in first.")
@@ -395,11 +287,15 @@ def analysis(request):
         if not csv_data:
             return HttpResponse("Error: CSV data missing. Please re-upload the file.")
 
+        try:
+            df = pd.read_csv(io.StringIO(csv_data))
+        except Exception as e:
+            return HttpResponse(f"Error reading CSV data: {str(e)}")
 
-        df = pd.read_csv(io.StringIO(csv_data))
         selected_columns = request.POST.getlist('columns')
         operation = request.POST.get('operation')
 
+        # Apply row range filtering
         try:
             min_row = int(request.POST.get('min_row', 0))  # Default to 0
             max_row = int(request.POST.get('max_row', len(df) - 1))  # Default to last index
@@ -419,8 +315,72 @@ def analysis(request):
         except ValueError:
             return HttpResponse("Error: Invalid min/max value range.")
 
+        # Advanced conditional filtering
+        filter_columns = request.POST.getlist("filter_column[]")
+        filter_operators = request.POST.getlist("filter_operator[]")
+        filter_values = request.POST.getlist("filter_value[]")
 
+        try:
+            for i in range(len(filter_columns)):
+                if filter_columns[i] and filter_operators[i] and filter_values[i]:
+                    column = filter_columns[i]
+                    operator = filter_operators[i]
+                    value = filter_values[i]
+                    
+                    # Skip if column doesn't exist
+                    if column not in df.columns:
+                        continue
+                    
+                    # Apply the filter based on the operator
+                    if operator == "=":
+                        # Try to convert the value to a number if the column is numeric
+                        if pd.api.types.is_numeric_dtype(df[column]):
+                            try:
+                                value = float(value)
+                            except ValueError:
+                                pass
+                        df = df[df[column] == value]
+                    elif operator == "!=":
+                        if pd.api.types.is_numeric_dtype(df[column]):
+                            try:
+                                value = float(value)
+                            except ValueError:
+                                pass
+                        df = df[df[column] != value]
+                    elif operator == ">":
+                        try:
+                            value = float(value)
+                            df = df[df[column] > value]
+                        except ValueError:
+                            return HttpResponse(f"Error: Cannot apply '>' operator to non-numeric value for column '{column}'", status=400)
+                    elif operator == "<":
+                        try:
+                            value = float(value)
+                            df = df[df[column] < value]
+                        except ValueError:
+                            return HttpResponse(f"Error: Cannot apply '<' operator to non-numeric value for column '{column}'", status=400)
+                    elif operator == ">=":
+                        try:
+                            value = float(value)
+                            df = df[df[column] >= value]
+                        except ValueError:
+                            return HttpResponse(f"Error: Cannot apply '>=' operator to non-numeric value for column '{column}'", status=400)
+                    elif operator == "<=":
+                        try:
+                            value = float(value)
+                            df = df[df[column] <= value]
+                        except ValueError:
+                            return HttpResponse(f"Error: Cannot apply '<=' operator to non-numeric value for column '{column}'", status=400)
+                    elif operator == "contains":
+                        df = df[df[column].astype(str).str.contains(str(value), case=False)]
+        except Exception as e:
+            return HttpResponse(f"Error applying advanced filters: {str(e)}", status=400)
+            
+        # Check if dataframe is empty after filtering
+        if df.empty:
+            return HttpResponse("No data remains after applying all filters. Please adjust your filter criteria.")
 
+        # Validate columns
         missing_columns = [col for col in selected_columns if col not in df.columns]
         if missing_columns:
             return HttpResponse(f"Error: Columns {missing_columns} not found in the data.")
@@ -473,6 +433,16 @@ def analysis(request):
                 elif operation == 'Frequency Count':
                     result[col] = df[col].value_counts().to_dict()
 
+        # Include filter data in the context for displaying current settings
+        filter_data = []
+        for i in range(len(filter_columns)):
+            if filter_columns[i] and filter_operators[i] and filter_values[i]:
+                filter_data.append({
+                    'column': filter_columns[i],
+                    'operator': filter_operators[i],
+                    'value': filter_values[i]
+                })
+
         return render(request, 'analysis.html', {
             'result': result,
             'row_data': row_data,
@@ -481,9 +451,11 @@ def analysis(request):
             'min_row': min_row,
             'max_row': max_row,
             'value_min': request.POST.get('value_min', ''),
-            'value_max': request.POST.get('value_max', '')
+            'value_max': request.POST.get('value_max', ''),
+            'filter_data': filter_data  # Pass filter data to template
         })
 
+    # GET request
     csv_data = request.session.get(SESSION_CSV_DATA)
     columns = pd.read_csv(io.StringIO(csv_data)).columns.tolist() if csv_data else []
     
@@ -495,101 +467,9 @@ def analysis(request):
         'min_row': '',
         'max_row': '',
         'value_min': '',
-        'value_max': ''
+        'value_max': '',
+        'filter_data': []
     })
-
-
-
-
-
-
-
-
-
-#def generate_graph(request):
-    if not request.session.get("is_logged_in"):
-        return redirect("login")
-
-    if request.method == "POST":
-        selected_columns = request.POST.getlist('columns')
-        graph_type = request.POST.get('graph_type')
-        
-        top_entries = request.POST.get('top_entries', None)
-        range_start = request.POST.get('range_start', None)
-        range_end = request.POST.get('range_end', None)
-        filter_column = request.POST.get('filter_column', None)
-        min_value = request.POST.get('min_value', None)
-        max_value = request.POST.get('max_value', None)
-        csv_data = request.session.get(SESSION_CSV_DATA)
-        if not csv_data:
-            return HttpResponse("No data found. Please upload and analyze the data first.", status=400)
-
-        df = pd.read_csv(io.StringIO(csv_data))
-
-        if not set(selected_columns).issubset(df.columns):
-            return HttpResponse("Selected columns not found in data", status=400)
-
-        try:
-            if top_entries:
-                top_entries = int(top_entries)
-                df = df.head(top_entries)
-            elif range_start and range_end:
-                range_start = int(range_start)
-                range_end = int(range_end)
-                df = df.iloc[range_start:range_end]
-            if filter_column and filter_column in df.columns:
-                if min_value:
-                    df = df[df[filter_column] >= float(min_value)]
-                if max_value:
-                    df = df[df[filter_column] <= float(max_value)]
-        except ValueError:
-            return HttpResponse("Invalid numeric input for filtering range or top entries", status=400)
-
-        try:
-            fig = None
-            if graph_type == "Bar Graph":
-                fig = px.bar(df, x=selected_columns[0], y=selected_columns[1:])
-            elif graph_type == "Histogram":
-                fig = px.histogram(df, x=selected_columns[0])
-            elif graph_type == "Line Chart":
-                fig = px.line(df, x=selected_columns[0], y=selected_columns[1:])
-            elif graph_type == "Scatter Plot":
-                fig = px.scatter(df, x=selected_columns[0], y=selected_columns[1])
-            elif graph_type == "Pie Chart":
-                fig = px.pie(df, names=selected_columns[0], values=selected_columns[1])
-            elif graph_type == "Box Plot":
-                fig = px.box(df, y=selected_columns)
-            elif graph_type == "Heatmap":
-                fig = px.density_heatmap(df, x=selected_columns[0], y=selected_columns[1])
-            elif graph_type == "Violin Plot":
-                fig = px.violin(df, x=selected_columns[0], y=selected_columns[1], box=True, points="all")
-            elif graph_type == "Sunburst Chart":
-                fig = px.sunburst(df, path=selected_columns, values=selected_columns[1])
-            elif graph_type == "Treemap":
-                fig = px.treemap(df, path=selected_columns, values=selected_columns[1])
-            elif graph_type == "Area Chart":
-                fig = px.area(df, x=selected_columns[0], y=selected_columns[1:])
-            elif graph_type == "Bubble Chart":
-                fig = px.scatter(df, x=selected_columns[0], y=selected_columns[1], size=selected_columns[1])
-            elif graph_type == "Funnel Chart":
-                fig = px.funnel(df, x=selected_columns[0], y=selected_columns[1])
-            elif graph_type == "Density Contour":
-                fig = px.density_contour(df, x=selected_columns[0], y=selected_columns[1])
-            elif graph_type == "Parallel Coordinates Plot":
-                fig = px.parallel_coordinates(df, dimensions=selected_columns)
-            elif graph_type == "Map Plot":
-                fig = px.scatter_geo(df, lat=selected_columns[0], lon=selected_columns[1])
-            else:
-                return HttpResponse("Invalid graph type selected", status=400)
-            
-            graph_html = fig.to_html(full_html=False)
-            return render(request, 'graphs.html', {'graph_html': graph_html, 'columns': df.columns.tolist()})
-        except Exception as e:
-            return HttpResponse(f"Error generating graph: {str(e)}", status=500)
-    
-    return HttpResponse("Invalid request method", status=400)
-
-
 
 
 
@@ -1167,15 +1047,26 @@ SESSION_DASHBOARD_DATA = "dashboard_graphs"
 SESSION_CSV_DATA = "csv_data"
 
 
+
+
 # def dashboard_view(request):
 #     if not request.session.get("is_logged_in"):
 #         return redirect("login")
 
+#     # Retrieve CSV data
 #     csv_data = request.session.get(SESSION_CSV_DATA)
 #     if not csv_data:
 #         return HttpResponse("No CSV data found. Please upload a CSV file first.", status=400)
 
-#     df = pd.read_csv(io.StringIO(csv_data))
+#     try:
+#         df = pd.read_csv(io.StringIO(csv_data))
+#     except pd.errors.EmptyDataError:
+#         return HttpResponse("The uploaded CSV file is empty.", status=400)
+#     except pd.errors.ParserError:
+#         return HttpResponse("Error parsing the CSV file. Please check the file format.", status=400)
+#     except Exception as e:
+#         return HttpResponse(f"Unexpected error reading CSV file: {str(e)}", status=500)
+
 #     columns = df.columns.tolist()
 #     dashboard_graphs = request.session.get(SESSION_DASHBOARD_DATA, [])
 
@@ -1190,18 +1081,20 @@ SESSION_CSV_DATA = "csv_data"
 #                     return HttpResponse(status=200)
 #                 return HttpResponse("Invalid index.", status=400)
 #             except ValueError:
-#                 return HttpResponse("Invalid request.", status=400)
+#                 return HttpResponse("Invalid request. Index must be an integer.", status=400)
 
-#         selected_columns = request.POST.getlist('columns')
-#         graph_type = request.POST.get('graph_type')
-#         start_index = request.POST.get('start_index')
-#         end_index = request.POST.get('end_index')
-#         min_value = request.POST.get('min_value')
-#         max_value = request.POST.get('max_value')
+#         # Get user selections
+#         selected_columns = request.POST.getlist("columns")
+#         graph_type = request.POST.get("graph_type")
+#         start_index = request.POST.get("start_index")
+#         end_index = request.POST.get("end_index")
+#         min_value = request.POST.get("min_value")
+#         max_value = request.POST.get("max_value")
 
 #         if not selected_columns or not graph_type:
-#             return HttpResponse("Please select columns and a graph type.", status=400)
+#             return HttpResponse("Please select at least one column and a graph type.", status=400)
 
+#         # Convert inputs safely
 #         try:
 #             start_index = int(start_index) if start_index else 0
 #             end_index = int(end_index) if end_index else len(df)
@@ -1210,66 +1103,81 @@ SESSION_CSV_DATA = "csv_data"
 #         except ValueError:
 #             return HttpResponse("Invalid numeric filter values.", status=400)
 
-
+#         # Validate column selection
+#         invalid_columns = [col for col in selected_columns if col not in df.columns]
+#         if invalid_columns:
+#             return HttpResponse(f"Invalid column selection: {', '.join(invalid_columns)}", status=400)
 
 #         df = df.iloc[start_index:end_index]  # Filter by row range
 
-
 #         # Apply min/max filtering
-#         if min_value is not None:
-#             df = df[df[selected_columns[0]] >= min_value]
-#         if max_value is not None:
-#             df = df[df[selected_columns[0]] <= max_value]
+#         try:
+#             if min_value is not None:
+#                 df = df[df[selected_columns[0]] >= min_value]
+#             if max_value is not None:
+#                 df = df[df[selected_columns[0]] <= max_value]
+#         except KeyError:
+#             return HttpResponse("Error filtering data. Ensure the selected column exists.", status=400)
+#         except TypeError:
+#             return HttpResponse("Filtering error: Ensure numerical filters are applied to numeric columns.", status=400)
 
-#         # More flexible column selection
-#         x_column = selected_columns[0] if df[selected_columns[0]].dtype == 'object' else None
+#         # Determine X and Y axis columns
+#         x_column = selected_columns[0] if df[selected_columns[0]].dtype == "object" else None
 #         y_columns = selected_columns if x_column is None else selected_columns[1:]
 
 #         fig = None
-#         if graph_type == "Bar Graph":
-#             fig = px.bar(df, x=x_column, y=y_columns) if x_column else px.bar(df[y_columns])
-#         elif graph_type == "Histogram":
-#             fig = px.histogram(df, x=y_columns[0])
-#         elif graph_type == "Line Chart":
-#             fig = px.line(df, x=x_column, y=y_columns) if x_column else px.line(df[y_columns])
-#         elif graph_type == "Scatter Plot":
-#             fig = px.scatter(df, x=x_column, y=y_columns[0]) if x_column else px.scatter(df, x=y_columns[0], y=y_columns[1])
-#         elif graph_type == "Pie Chart":
-#             if len(y_columns) == 1 and x_column:
-#                 fig = px.pie(df, names=x_column, values=y_columns[0])
-#         elif graph_type == "Box Plot":
-#             fig = px.box(df, y=y_columns)
-#         elif graph_type == "Area Chart":
-#             fig = px.area(df, x=x_column, y=y_columns) if x_column else px.area(df[y_columns])
-#         elif graph_type == "Heatmap":
-#             fig = ff.create_annotated_heatmap(z=df[y_columns].corr().values, x=y_columns, y=y_columns)
-#         elif graph_type == "Bubble Chart":
-#             if len(y_columns) == 2:
-#                 fig = px.scatter(df, x=y_columns[0], y=y_columns[1], size=y_columns[1], color=y_columns[0])
-#         elif graph_type == "Funnel Chart":
-#             if len(y_columns) == 1 and x_column:
-#                 fig = px.funnel(df, x=x_column, y=y_columns[0])
-#         elif graph_type == "Violin Plot":
-#             fig = px.violin(df, y=y_columns, box=True, points="all")
-#         elif graph_type == "Density Contour":
-#             if len(y_columns) >= 2:
-#                 fig = px.density_contour(df, x=y_columns[0], y=y_columns[1])
-#         elif graph_type == "Parallel Coordinates Plot":
-#             fig = px.parallel_coordinates(df, dimensions=y_columns)
-#         elif graph_type == "Sunburst Chart":
-#             if len(y_columns) == 1 and x_column:
-#                 fig = px.sunburst(df, path=[x_column], values=y_columns[0])
-#         elif graph_type == "Map Plot":
-#             if 'latitude' in df.columns and 'longitude' in df.columns:
-#                 fig = px.scatter_mapbox(df, lat="latitude", lon="longitude", zoom=3, mapbox_style="carto-positron")
+#         try:
+#             if graph_type == "Bar Graph":
+#                 fig = px.bar(df, x=x_column, y=y_columns) if x_column else px.bar(df[y_columns])
+#             elif graph_type == "Histogram":
+#                 fig = px.histogram(df, x=y_columns[0])
+#             elif graph_type == "Line Chart":
+#                 fig = px.line(df, x=x_column, y=y_columns) if x_column else px.line(df[y_columns])
+#             elif graph_type == "Scatter Plot":
+#                 fig = px.scatter(df, x=x_column, y=y_columns[0]) if x_column else px.scatter(df, x=y_columns[0], y=y_columns[1])
+#             elif graph_type == "Pie Chart":
+#                 if len(y_columns) == 1 and x_column:
+#                     fig = px.pie(df, names=x_column, values=y_columns[0])
+#             elif graph_type == "Box Plot":
+#                 fig = px.box(df, y=y_columns)
+#             elif graph_type == "Area Chart":
+#                 fig = px.area(df, x=x_column, y=y_columns) if x_column else px.area(df[y_columns])
+#             elif graph_type == "Heatmap":
+#                 fig = ff.create_annotated_heatmap(z=df[y_columns].corr().values, x=y_columns, y=y_columns)
+#             elif graph_type == "Bubble Chart":
+#                 if len(y_columns) == 2:
+#                     fig = px.scatter(df, x=y_columns[0], y=y_columns[1], size=y_columns[1], color=y_columns[0])
+#             elif graph_type == "Funnel Chart":
+#                 if len(y_columns) == 1 and x_column:
+#                     fig = px.funnel(df, x=x_column, y=y_columns[0])
+#             elif graph_type == "Violin Plot":
+#                 fig = px.violin(df, y=y_columns, box=True, points="all")
+#             elif graph_type == "Density Contour":
+#                 if len(y_columns) >= 2:
+#                     fig = px.density_contour(df, x=y_columns[0], y=y_columns[1])
+#             elif graph_type == "Parallel Coordinates Plot":
+#                 fig = px.parallel_coordinates(df, dimensions=y_columns)
+#             elif graph_type == "Sunburst Chart":
+#                 if len(y_columns) == 1 and x_column:
+#                     fig = px.sunburst(df, path=[x_column], values=y_columns[0])
+#             elif graph_type == "Map Plot":
+#                 if "latitude" in df.columns and "longitude" in df.columns:
+#                     fig = px.scatter_mapbox(df, lat="latitude", lon="longitude", zoom=3, mapbox_style="carto-positron")
+#             else:
+#                 return HttpResponse("Invalid graph type selected.", status=400)
 
-#         if fig:
-#             graph_html = fig.to_html(full_html=False)
-#             dashboard_graphs.append(graph_html)
-#             request.session[SESSION_DASHBOARD_DATA] = dashboard_graphs
-#             request.session.modified = True  # Ensure session updates
+#             if fig:
+#                 graph_html = fig.to_html(full_html=False)
+#                 dashboard_graphs.append(graph_html)
+#                 request.session[SESSION_DASHBOARD_DATA] = dashboard_graphs
+#                 request.session.modified = True  # Ensure session updates
+
+#         except Exception as e:
+#             return HttpResponse(f"Unexpected error generating graph: {str(e)}", status=500)
 
 #     return render(request, "dashboard.html", {"columns": columns, "graph_htmls": dashboard_graphs})
+
+
 
 
 def dashboard_view(request):
@@ -1307,85 +1215,173 @@ def dashboard_view(request):
                 return HttpResponse("Invalid request. Index must be an integer.", status=400)
 
         # Get user selections
-        selected_columns = request.POST.getlist("columns")
+        x_axis = request.POST.get("x_axis")
+        y_axis = request.POST.getlist("y_axis")
         graph_type = request.POST.get("graph_type")
+        
+        # Get range selections with defaults
         start_index = request.POST.get("start_index")
         end_index = request.POST.get("end_index")
-        min_value = request.POST.get("min_value")
-        max_value = request.POST.get("max_value")
+        
+        # Get filter criteria
+        filter_columns = request.POST.getlist("filter_column[]")
+        filter_operators = request.POST.getlist("filter_operator[]")
+        filter_values = request.POST.getlist("filter_value[]")
 
-        if not selected_columns or not graph_type:
-            return HttpResponse("Please select at least one column and a graph type.", status=400)
+        if not y_axis or not graph_type:
+            return HttpResponse("Please select at least one Y-axis column and a graph type.", status=400)
 
-        # Convert inputs safely
+        # Initialize a filtered dataframe
+        filtered_df = df.copy()
+        
+        # Apply row range filtering with defaults
         try:
             start_index = int(start_index) if start_index else 0
-            end_index = int(end_index) if end_index else len(df)
-            min_value = float(min_value) if min_value else None
-            max_value = float(max_value) if max_value else None
+            end_index = int(end_index) if end_index and end_index.strip() else len(filtered_df)
+            filtered_df = filtered_df.iloc[start_index:end_index]
         except ValueError:
-            return HttpResponse("Invalid numeric filter values.", status=400)
+            return HttpResponse("Invalid numeric index values.", status=400)
 
-        # Validate column selection
-        invalid_columns = [col for col in selected_columns if col not in df.columns]
-        if invalid_columns:
-            return HttpResponse(f"Invalid column selection: {', '.join(invalid_columns)}", status=400)
-
-        df = df.iloc[start_index:end_index]  # Filter by row range
-
-        # Apply min/max filtering
+        # Apply additional filters
         try:
-            if min_value is not None:
-                df = df[df[selected_columns[0]] >= min_value]
-            if max_value is not None:
-                df = df[df[selected_columns[0]] <= max_value]
-        except KeyError:
-            return HttpResponse("Error filtering data. Ensure the selected column exists.", status=400)
-        except TypeError:
-            return HttpResponse("Filtering error: Ensure numerical filters are applied to numeric columns.", status=400)
+            for i in range(len(filter_columns)):
+                if filter_columns[i] and filter_operators[i] and filter_values[i]:
+                    column = filter_columns[i]
+                    operator = filter_operators[i]
+                    value = filter_values[i]
+                    
+                    # Skip if column doesn't exist
+                    if column not in filtered_df.columns:
+                        continue
+                    
+                    # Apply the filter based on the operator
+                    if operator == "=":
+                        # Try to convert the value to a number if the column is numeric
+                        if pd.api.types.is_numeric_dtype(filtered_df[column]):
+                            try:
+                                value = float(value)
+                            except ValueError:
+                                pass
+                        filtered_df = filtered_df[filtered_df[column] == value]
+                    elif operator == "!=":
+                        if pd.api.types.is_numeric_dtype(filtered_df[column]):
+                            try:
+                                value = float(value)
+                            except ValueError:
+                                pass
+                        filtered_df = filtered_df[filtered_df[column] != value]
+                    elif operator == ">":
+                        try:
+                            value = float(value)
+                            filtered_df = filtered_df[filtered_df[column] > value]
+                        except ValueError:
+                            return HttpResponse(f"Error: Cannot apply '>' operator to non-numeric value for column '{column}'", status=400)
+                    elif operator == "<":
+                        try:
+                            value = float(value)
+                            filtered_df = filtered_df[filtered_df[column] < value]
+                        except ValueError:
+                            return HttpResponse(f"Error: Cannot apply '<' operator to non-numeric value for column '{column}'", status=400)
+                    elif operator == ">=":
+                        try:
+                            value = float(value)
+                            filtered_df = filtered_df[filtered_df[column] >= value]
+                        except ValueError:
+                            return HttpResponse(f"Error: Cannot apply '>=' operator to non-numeric value for column '{column}'", status=400)
+                    elif operator == "<=":
+                        try:
+                            value = float(value)
+                            filtered_df = filtered_df[filtered_df[column] <= value]
+                        except ValueError:
+                            return HttpResponse(f"Error: Cannot apply '<=' operator to non-numeric value for column '{column}'", status=400)
+                    elif operator == "contains":
+                        filtered_df = filtered_df[filtered_df[column].astype(str).str.contains(str(value), case=False)]
+        except Exception as e:
+            return HttpResponse(f"Error applying filters: {str(e)}", status=400)
 
-        # Determine X and Y axis columns
-        x_column = selected_columns[0] if df[selected_columns[0]].dtype == "object" else None
-        y_columns = selected_columns if x_column is None else selected_columns[1:]
+        # If filtered data is empty, return error
+        if filtered_df.empty:
+            return HttpResponse("Filtered data is empty. Please adjust your filters.", status=400)
+
+        # Validate axis selection
+        if x_axis and x_axis not in filtered_df.columns:
+            return HttpResponse(f"Invalid X-axis column selection: {x_axis}", status=400)
+            
+        invalid_y_columns = [col for col in y_axis if col not in filtered_df.columns]
+        if invalid_y_columns:
+            return HttpResponse(f"Invalid Y-axis column selection: {', '.join(invalid_y_columns)}", status=400)
 
         fig = None
         try:
+            # Generate visualization based on selected graph type
             if graph_type == "Bar Graph":
-                fig = px.bar(df, x=x_column, y=y_columns) if x_column else px.bar(df[y_columns])
+                fig = px.bar(filtered_df, x=x_axis, y=y_axis) if x_axis else px.bar(filtered_df[y_axis])
             elif graph_type == "Histogram":
-                fig = px.histogram(df, x=y_columns[0])
+                fig = px.histogram(filtered_df, x=y_axis[0])
             elif graph_type == "Line Chart":
-                fig = px.line(df, x=x_column, y=y_columns) if x_column else px.line(df[y_columns])
+                fig = px.line(filtered_df, x=x_axis, y=y_axis) if x_axis else px.line(filtered_df[y_axis])
             elif graph_type == "Scatter Plot":
-                fig = px.scatter(df, x=x_column, y=y_columns[0]) if x_column else px.scatter(df, x=y_columns[0], y=y_columns[1])
+                if x_axis:
+                    fig = px.scatter(filtered_df, x=x_axis, y=y_axis[0] if y_axis else None)
+                elif len(y_axis) >= 2:
+                    fig = px.scatter(filtered_df, x=y_axis[0], y=y_axis[1])
+                else:
+                    return HttpResponse("Scatter plot requires both X and Y axis selections or at least 2 Y columns.", status=400)
             elif graph_type == "Pie Chart":
-                if len(y_columns) == 1 and x_column:
-                    fig = px.pie(df, names=x_column, values=y_columns[0])
+                if x_axis and len(y_axis) == 1:
+                    fig = px.pie(filtered_df, names=x_axis, values=y_axis[0])
+                else:
+                    return HttpResponse("Pie chart requires one X axis column (for names) and one Y axis column (for values).", status=400)
             elif graph_type == "Box Plot":
-                fig = px.box(df, y=y_columns)
+                fig = px.box(filtered_df, x=x_axis, y=y_axis)
             elif graph_type == "Area Chart":
-                fig = px.area(df, x=x_column, y=y_columns) if x_column else px.area(df[y_columns])
+                fig = px.area(filtered_df, x=x_axis, y=y_axis) if x_axis else px.area(filtered_df[y_axis])
             elif graph_type == "Heatmap":
-                fig = ff.create_annotated_heatmap(z=df[y_columns].corr().values, x=y_columns, y=y_columns)
+                corr_columns = y_axis
+                if len(corr_columns) < 2:
+                    return HttpResponse("Heatmap requires at least 2 columns for correlation analysis.", status=400)
+                fig = ff.create_annotated_heatmap(
+                    z=filtered_df[corr_columns].corr().values,
+                    x=corr_columns,
+                    y=corr_columns
+                )
             elif graph_type == "Bubble Chart":
-                if len(y_columns) == 2:
-                    fig = px.scatter(df, x=y_columns[0], y=y_columns[1], size=y_columns[1], color=y_columns[0])
+                if x_axis and len(y_axis) >= 2:
+                    fig = px.scatter(filtered_df, x=x_axis, y=y_axis[0], size=y_axis[1], color=y_axis[0] if len(y_axis) > 2 else None)
+                elif len(y_axis) >= 3:
+                    fig = px.scatter(filtered_df, x=y_axis[0], y=y_axis[1], size=y_axis[2], color=y_axis[0])
+                else:
+                    return HttpResponse("Bubble chart requires X axis, Y axis, and at least one more column for size.", status=400)
             elif graph_type == "Funnel Chart":
-                if len(y_columns) == 1 and x_column:
-                    fig = px.funnel(df, x=x_column, y=y_columns[0])
+                if x_axis and len(y_axis) == 1:
+                    fig = px.funnel(filtered_df, x=x_axis, y=y_axis[0])
+                else:
+                    return HttpResponse("Funnel chart requires one X axis column and one Y axis column.", status=400)
             elif graph_type == "Violin Plot":
-                fig = px.violin(df, y=y_columns, box=True, points="all")
+                fig = px.violin(filtered_df, x=x_axis, y=y_axis, box=True, points="all")
             elif graph_type == "Density Contour":
-                if len(y_columns) >= 2:
-                    fig = px.density_contour(df, x=y_columns[0], y=y_columns[1])
+                if len(y_axis) >= 2:
+                    fig = px.density_contour(filtered_df, x=y_axis[0], y=y_axis[1])
+                elif x_axis and len(y_axis) == 1:
+                    fig = px.density_contour(filtered_df, x=x_axis, y=y_axis[0])
+                else:
+                    return HttpResponse("Density contour requires both X and Y axis selections.", status=400)
             elif graph_type == "Parallel Coordinates Plot":
-                fig = px.parallel_coordinates(df, dimensions=y_columns)
+                dimensions = [x_axis] if x_axis else []
+                dimensions.extend(y_axis)
+                if len(dimensions) < 2:
+                    return HttpResponse("Parallel coordinates plot requires at least 2 columns.", status=400)
+                fig = px.parallel_coordinates(filtered_df, dimensions=dimensions)
             elif graph_type == "Sunburst Chart":
-                if len(y_columns) == 1 and x_column:
-                    fig = px.sunburst(df, path=[x_column], values=y_columns[0])
+                if x_axis and len(y_axis) == 1:
+                    fig = px.sunburst(filtered_df, path=[x_axis], values=y_axis[0])
+                else:
+                    return HttpResponse("Sunburst chart requires one X axis column for path and one Y axis column for values.", status=400)
             elif graph_type == "Map Plot":
-                if "latitude" in df.columns and "longitude" in df.columns:
-                    fig = px.scatter_mapbox(df, lat="latitude", lon="longitude", zoom=3, mapbox_style="carto-positron")
+                if "latitude" in filtered_df.columns and "longitude" in filtered_df.columns:
+                    fig = px.scatter_mapbox(filtered_df, lat="latitude", lon="longitude", zoom=3, mapbox_style="carto-positron")
+                else:
+                    return HttpResponse("Map plot requires 'latitude' and 'longitude' columns in your data.", status=400)
             else:
                 return HttpResponse("Invalid graph type selected.", status=400)
 
@@ -1399,6 +1395,34 @@ def dashboard_view(request):
             return HttpResponse(f"Unexpected error generating graph: {str(e)}", status=500)
 
     return render(request, "dashboard.html", {"columns": columns, "graph_htmls": dashboard_graphs})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 import pandas as pd

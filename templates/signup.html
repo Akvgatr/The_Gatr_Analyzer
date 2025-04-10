@@ -26,7 +26,17 @@
             padding: 0;
             box-sizing: border-box;
         }
-
+        .site-title {
+            text-align: center;
+            font-size: 40px;
+            margin-bottom: 10px;
+            font-weight: 700;
+            color: var(--primary-light);
+            letter-spacing: 1px;
+            background: linear-gradient(135deg, var(--primary-light), var(--primary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
         body {
             display: flex;
             height: 100vh;
@@ -121,7 +131,7 @@
         .form-group i.input-icon {
             position: absolute;
             left: 15px;
-            top: 42px;
+            top: 53px;
             color: var(--text-muted);
             font-size: 18px;
         }
@@ -156,7 +166,7 @@
         .toggle-password {
             position: absolute;
             right: 15px;
-            top: 50%;
+            top: 70%;
             transform: translateY(-50%);
             cursor: pointer;
             color: var(--text-muted);
@@ -362,7 +372,8 @@
             <div class="form-box">
                 <div class="logo">
                     <i class="fas fa-chart-line"></i>
-                </div>
+                </div>                <h1 class="site-title">Gatr_analyzer</h1>
+
                 <h2>Create Account</h2>
 
                 {% if messages %}
