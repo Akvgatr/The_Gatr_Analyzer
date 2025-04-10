@@ -14,11 +14,17 @@ from pathlib import Path
 import os
 import dj_database_url  # Ensure you have installed this package
 
+from dotenv import load_dotenv
+load_dotenv()
+
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
 
-SECRET_KEY = 'django-insecure-%pywo%*s2zc^7zi$lw@yr01e!qc_zf!a+^0p=hx_^+k4s(%%6z'
+# SECRET_KEY = 'django-insecure-%pywo%*s2zc^7zi$lw@yr01e!qc_zf!a+^0p=hx_^+k4s(%%6z'
+
+SECRET_KEY = os.getenv('SECRET_KEY')
 
 DEBUG = os.getenv('DEBUG', 'True') == 'True'
 
