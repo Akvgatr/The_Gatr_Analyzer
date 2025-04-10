@@ -101,18 +101,33 @@ LOGIN_REDIRECT_URL = '/'  # Redirect after successful login
 
 
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': 'bzj0q4hvrkhixozxayxl',  # Matches MYSQL_ADDON_DB
+#         'USER': 'ufcwfewaajjk4arb',      # Matches MYSQL_ADDON_USER
+#         'PASSWORD': 'fET5IwXoQvb4NwWHGiuB',  # Matches MYSQL_ADDON_PASSWORD
+#         'HOST': 'bzj0q4hvrkhixozxayxl-mysql.services.clever-cloud.com',  # Matches MYSQL_ADDON_HOST
+#         'PORT': '3306',  # Matches MYSQL_ADDON_PORT
+#     }
+# }
+
+
+import os
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'bzj0q4hvrkhixozxayxl',  # Matches MYSQL_ADDON_DB
-        'USER': 'ufcwfewaajjk4arb',      # Matches MYSQL_ADDON_USER
-        'PASSWORD': 'fET5IwXoQvb4NwWHGiuB',  # Matches MYSQL_ADDON_PASSWORD
-        'HOST': 'bzj0q4hvrkhixozxayxl-mysql.services.clever-cloud.com',  # Matches MYSQL_ADDON_HOST
-        'PORT': '3306',  # Matches MYSQL_ADDON_PORT
+        'NAME': os.environ.get('MYSQL_NAME'),
+        'USER': os.environ.get('MYSQL_USER'),
+        'PASSWORD': os.environ.get('MYSQL_PASSWORD'),
+        'HOST': os.environ.get('MYSQL_HOST'),
+        'PORT': os.environ.get('MYSQL_PORT', '3306'),
+        'OPTIONS': {
+            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'"
+        }
     }
 }
-
-
 
 
 
